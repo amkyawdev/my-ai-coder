@@ -5,9 +5,10 @@
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
   const modalTabs = document.querySelectorAll('.modal-tab');
-  const desktopLoginBtn = document.getElementById('desktopLoginBtn');
+  const desktopLoginBtn = document.getElementById('loginBtn');
   const mobileLoginBtn = document.getElementById('mobileLoginBtn');
   const userSection = document.getElementById('userSection');
+  const userAvatar = document.getElementById('userAvatar');
   const userName = document.getElementById('userName');
 
   // State
@@ -17,6 +18,7 @@
   function init() {
     checkAuth();
     bindEvents();
+    updateLucideIcons();
   }
 
   // Check if user is logged in
@@ -25,8 +27,13 @@
     const user = localStorage.getItem('user');
     
     if (token && user) {
-      currentUser = JSON.parse(user);
-      updateUIForLoggedIn();
+      try {
+        currentUser = JSON.parse(user);
+        updateUIForLoggedIn();
+      } catch (e) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+      }
     }
   }
 
@@ -37,22 +44,15 @@
     }
     
     if (mobileLoginBtn) {
-      mobileLoginBtn.textContent = 'Logout';
-      mobileLoginBtn.classList.remove('primary');
+      mobileLoginBtn.innerHTML = '<i data-lucide="log-out"></i>Logout';
     }
 
-    // Create user section
-    const header = document.querySelector('.header');
-    const existingUserSection = header.querySelector('.user-section');
-    
-    if (!existingUserSection) {
-      const userSectionEl = document.createElement('div');
-      userSectionEl.className = 'user-section active';
-      userSectionEl.innerHTML = `
-        <div class="user-avatar">${currentUser.name.charAt(0).toUpperCase()}</div>
-        <span class="user-name">${currentUser.name}</span>
-      `;
-      header.insertBefore(userSectionEl, header.querySelector('.hamburger'));
+    // Create or update user section
+    if (userSection && userAvatar && userName && currentUser) {
+      userSection.classList.add('active');
+      userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+      userName.textContent = currentUser.name;
+      updateLucideIcons();
     }
   }
 
@@ -99,10 +99,18 @@
     });
   }
 
+  // Update Lucide icons
+  function updateLucideIcons() {
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
+
   // Open auth modal
   function openAuthModal() {
     if (authModal) {
       authModal.classList.add('active');
+      updateLucideIcons();
     }
   }
 
@@ -110,9 +118,8 @@
   function closeAuthModal() {
     if (authModal) {
       authModal.classList.remove('active');
-      // Reset forms
-      loginForm.reset();
-      registerForm.reset();
+      if (loginForm) loginForm.reset();
+      if (registerForm) registerForm.reset();
     }
   }
 
@@ -128,12 +135,12 @@
       loginForm.classList.remove('active');
       registerForm.classList.add('active');
     }
+    updateLucideIcons();
   }
 
   // Handle mobile login
   function handleMobileLogin() {
     if (currentUser) {
-      // Logout
       logout();
     } else {
       openAuthModal();
@@ -150,29 +157,20 @@
     try {
       const response = await fetch('/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Save token and user
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        
         currentUser = data.user;
         updateUIForLoggedIn();
         closeAuthModal();
-        
         showToast('Welcome back!', 'success');
-        
-        // Refresh saved codes if on page
-        if (typeof loadSavedCodes === 'function') {
-          loadSavedCodes();
-        }
+        if (typeof loadSavedCodes === 'function') loadSavedCodes();
       } else {
         showToast(data.error || 'Login failed', 'error');
       }
@@ -193,29 +191,20 @@
     try {
       const response = await fetch('/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Save token and user
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        
         currentUser = data.user;
         updateUIForLoggedIn();
         closeAuthModal();
-        
         showToast('Account created successfully!', 'success');
-        
-        // Refresh saved codes if on page
-        if (typeof loadSavedCodes === 'function') {
-          loadSavedCodes();
-        }
+        if (typeof loadSavedCodes === 'function') loadSavedCodes();
       } else {
         showToast(data.error || 'Registration failed', 'error');
       }
@@ -231,23 +220,14 @@
     localStorage.removeItem('user');
     currentUser = null;
 
-    // Reset UI
-    if (desktopLoginBtn) {
-      desktopLoginBtn.style.display = 'inline-flex';
-    }
-    
+    if (desktopLoginBtn) desktopLoginBtn.style.display = 'inline-flex';
     if (mobileLoginBtn) {
-      mobileLoginBtn.textContent = 'Login';
-      mobileLoginBtn.classList.add('primary');
+      mobileLoginBtn.innerHTML = '<i data-lucide="log-in"></i>Login';
     }
-
-    // Remove user section
-    const userSectionEl = document.querySelector('.user-section');
-    if (userSectionEl) {
-      userSectionEl.remove();
-    }
+    if (userSection) userSection.classList.remove('active');
 
     showToast('Logged out successfully', 'success');
+    updateLucideIcons();
   }
 
   // Show toast notification
@@ -258,16 +238,14 @@
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `
-      <span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span>
+      <i data-lucide="${type === 'success' ? 'check-circle' : 'x-circle'}" class="toast-icon"></i>
       <span class="toast-message">${message}</span>
     `;
 
     container.appendChild(toast);
+    updateLucideIcons();
 
-    // Trigger animation
     setTimeout(() => toast.classList.add('show'), 10);
-
-    // Remove after 3 seconds
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 300);
@@ -292,11 +270,5 @@
   }
 
   // Expose functions globally
-  window.Auth = {
-    isAuthenticated,
-    getToken,
-    logout,
-    openAuthModal,
-    showToast
-  };
+  window.Auth = { isAuthenticated, getToken, logout, openAuthModal, showToast };
 })();

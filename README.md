@@ -1,105 +1,152 @@
-# my-ai-coder
+# AI Coder - Smart Code Generator Platform
 
-AI-powered code generator with authentication. Generate code using AI, save and manage your generated code snippets.
+<p align="center">
+  <img src="https://img.shields.io/badge/AI-Powered%20Code-6366f1?style=for-the-badge&logo=openai&logoColor=white" alt="AI Powered">
+  <img src="https://img.shields.io/badge/Cloudflare-Workers-f38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare Workers">
+  <img src="https://img.shields.io/badge/Neon-Database-0e2f44?style=for-the-badge&logo=postgresql&logoColor=white" alt="Neon Database">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+</p>
 
-## Features
+AI-powered code generator with modern UI/UX. Generate production-ready code from natural language descriptions, save and manage your code snippets with user authentication.
 
-- 🤖 **AI Code Generation** - Describe what you want to build and let AI generate the code
-- 💾 **Save & Manage** - Save generated code to your personal library
-- 🔐 **Authentication** - Secure login/register with JWT tokens
-- 📱 **Mobile-First UI** - Responsive design that works on all devices
-- 🎨 **Modern UI/UX** - Dark theme with smooth animations
+## ✨ Features
 
-## Tech Stack
+- 🤖 **AI Code Generation** - Describe what you want to build and let AI write the code
+- 💾 **Code Management** - Save, view, copy, and delete your generated code
+- 🔐 **User Authentication** - Secure JWT-based login and registration
+- 📱 **Mobile-First Design** - Responsive UI that works on all devices
+- 🎨 **Modern UI/UX** - Dark theme with Lucide icons and smooth animations
+- ⚡ **Fast Performance** - Built on Cloudflare Workers edge network
 
-- **Frontend**: HTML, CSS (Panda.css), JavaScript
-- **Backend**: Cloudflare Workers
-- **Database**: Neon PostgreSQL
-- **Authentication**: JWT
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 18+ 
 - Cloudflare account
-- Neon database
+- Neon PostgreSQL database
+- OpenAI API key (optional, for AI generation)
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/amkyawdev/my-ai-coder.git
+cd my-ai-coder
 
-3. Copy `.env.example` to `.dev.vars` and configure:
-   ```bash
-   cp .env.example .dev.vars
-   ```
+# Install dependencies
+npm install
+```
 
-4. Update `.dev.vars` with your credentials:
-   ```
-   DATABASE_URL=your-neon-connection-string
-   JWT_SECRET=your-secret-key
-   OPENAI_API_KEY=your-openai-key
-   ```
+### Configuration
+
+1. Copy the environment file:
+```bash
+cp .env.example .dev.vars
+```
+
+2. Update `.dev.vars` with your credentials:
+```bash
+DATABASE_URL=postgresql://user:password@host/neondb
+JWT_SECRET=your-secret-key-min-32-chars
+OPENAI_API_KEY=sk-...
+```
 
 ### Development
 
-Run locally:
 ```bash
+# Run locally
 npm run dev
 ```
 
 ### Deployment
 
-Deploy to Cloudflare Workers:
 ```bash
+# Deploy to Cloudflare Workers
 npm run deploy
 ```
 
-## Project Structure
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Frontend | HTML5, CSS3, JavaScript (ES6+) |
+| Backend | Cloudflare Workers |
+| Database | Neon PostgreSQL |
+| Icons | Lucide |
+| Auth | JWT |
+
+## 📁 Project Structure
 
 ```
 my-ai-coder/
-├── index.html              # Main HTML file
+├── index.html                    # Main HTML file
 ├── public/
-│   ├── css/style.css      # Additional styles
+│   ├── css/style.css            # Additional styles
 │   └── js/
-│       ├── app.js         # Main application logic
-│       └── auth.js        # Authentication UI
+│       ├── app.js               # Main application logic
+│       └── auth.js              # Authentication UI
 ├── src/
-│   ├── index.js           # Worker entry point
-│   ├── routes/            # API routes
-│   │   ├── generate.js    # Code generation
-│   │   ├── save-code.js   # Save/get/delete codes
-│   │   └── auth.js       # Login/register
-│   ├── services/          # Business logic
-│   │   ├── openhands.js  # AI service
-│   │   ├── database.js  # Database service
-│   │   └── jwt.js       # JWT service
-│   └── utils/            # Utilities
-│       ├── cors.js       # CORS middleware
-│       └── auth.js      # Auth middleware
+│   ├── index.js                 # Worker entry point
+│   ├── routes/
+│   │   ├── generate.js          # Code generation endpoint
+│   │   ├── save-code.js         # Save/get/delete codes
+│   │   └── auth.js              # Login/register handlers
+│   ├── services/
+│   │   ├── openhands.js         # AI service (OpenAI)
+│   │   ├── database.js          # Database connection
+│   │   └── jwt.js               # JWT authentication
+│   └── utils/
+│       ├── cors.js              # CORS middleware
+│       ├── auth.js              # Auth middleware
+│       └── validation.js       # Input validation
 ├── database/
-│   └── schema.sql        # Database schema
-├── wrangler.toml        # Cloudflare config
-└── package.json         # Dependencies
+│   └── schema.sql               # Database schema
+├── wrangler.toml                # Cloudflare config
+└── package.json                 # Dependencies
 ```
 
-## API Endpoints
+## 📡 API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/generate` | Generate code from prompt |
-| POST | `/save-code` | Save generated code (auth required) |
-| GET | `/get-codes` | Get all saved codes (auth required) |
-| GET | `/get-code/:id` | Get single code (auth required) |
-| DELETE | `/delete-code/:id` | Delete code (auth required) |
-| POST | `/auth/login` | User login |
-| POST | `/auth/register` | User registration |
+| Method | Endpoint | Description | Auth |
+|--------|----------|--------------|------|
+| POST | `/generate` | Generate code from prompt | ❌ |
+| POST | `/save-code` | Save generated code | ✅ |
+| GET | `/get-codes` | Get all saved codes | ✅ |
+| GET | `/get-code/:id` | Get single code | ✅ |
+| DELETE | `/delete-code/:id` | Delete code | ✅ |
+| POST | `/auth/login` | User login | ❌ |
+| POST | `/auth/register` | User registration | ❌ |
 
-## License
+## 🎨 UI Components
 
-MIT
+- **Header** - Logo, navigation links, user section
+- **Hero Section** - Badge, title, description
+- **Code Generator** - Prompt input, language/framework selection
+- **Output Section** - Code display, copy/save buttons
+- **Saved Codes** - List of saved code items
+- **Auth Modal** - Login/register forms with tabs
+
+## 📱 Responsive Design
+
+| Breakpoint | Width | Layout |
+|------------|-------|--------|
+| Mobile | < 768px | Single column, hamburger menu |
+| Tablet | 768px - 1024px | Adaptive navigation |
+| Desktop | > 1024px | Full navigation, wider content |
+
+## 🔧 Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | Neon PostgreSQL connection string | ✅ |
+| `JWT_SECRET` | Secret key for JWT tokens | ✅ |
+| `OPENAI_API_KEY` | OpenAI API key for code generation | ❌ |
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">Made with ❤️ by <a href="https://github.com/amkyawdev">amkyawdev</a></p>

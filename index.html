@@ -3,30 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Coder - Your Smart Coding Assistant</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-  <script src="https://api.panda-css.com/v1"></script>
+  <title>AI Coder - Smart Code Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
-      --bg-primary: #0d0d0d;
-      --bg-secondary: #1a1a1a;
-      --bg-tertiary: #262626;
-      --bg-card: #1f1f1f;
-      --text-primary: #f5f5f5;
-      --text-secondary: #a3a3a3;
-      --text-muted: #737373;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --accent-glow: rgba(59, 130, 246, 0.3);
-      --border: #333333;
-      --border-light: #404040;
-      --success: #22c55e;
-      --error: #ef4444;
-      --radius: 8px;
-      --radius-lg: 12px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+      --bg-primary: #080808;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1a1a1a;
+      --bg-card: #141414;
+      --bg-hover: #1c1c1c;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1a1;
+      --text-muted: #525252;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-light: rgba(99, 102, 241, 0.15);
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --border: #262626;
+      --border-light: #333333;
+      --success: #10b981;
+      --error: #f43f5e;
+      --warning: #f59e0b;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
     }
 
     * {
@@ -36,26 +44,56 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.6;
     }
 
-    /* Background Pattern */
-    body::before {
-      content: '';
+    /* Animated Background */
+    .bg-pattern {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: 
-        radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-pattern::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 60%);
+      animation: bgMove 20s ease-in-out infinite;
+    }
+
+    @keyframes bgMove {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-2%, -2%) rotate(1deg); }
+    }
+
+    .grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
     }
 
     .app-container {
@@ -64,29 +102,29 @@
       min-height: 100vh;
     }
 
-    /* Header & Navigation */
+    /* Header */
     .header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 56px;
-      background: rgba(13, 13, 13, 0.85);
-      backdrop-filter: blur(12px);
+      height: 64px;
+      background: rgba(8, 8, 8, 0.8);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
-      z-index: 100;
+      padding: 0 20px;
+      z-index: 1000;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 18px;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
       color: var(--text-primary);
       text-decoration: none;
       transition: var(--transition);
@@ -97,20 +135,118 @@
     }
 
     .logo-icon {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, var(--accent), #60a5fa);
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
       border-radius: var(--radius);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      transition: var(--transition);
+    }
+
+    .logo:hover .logo-icon {
+      transform: rotate(-10deg) scale(1.05);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    /* Navigation */
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      padding: 10px 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    .nav-link.active {
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-light);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-light);
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 13px;
     }
 
     /* Hamburger Menu */
     .hamburger {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -119,17 +255,17 @@
       cursor: pointer;
       border-radius: var(--radius);
       transition: var(--transition);
-      background: var(--bg-secondary);
+      background: var(--bg-tertiary);
       border: 1px solid var(--border);
     }
 
     .hamburger:hover {
-      background: var(--bg-tertiary);
+      background: var(--bg-hover);
       border-color: var(--border-light);
     }
 
     .hamburger span {
-      width: 18px;
+      width: 20px;
       height: 2px;
       background: var(--text-primary);
       border-radius: 2px;
@@ -153,17 +289,18 @@
     /* Mobile Menu */
     .mobile-menu {
       position: fixed;
-      top: 56px;
+      top: 64px;
       left: 0;
       right: 0;
-      background: var(--bg-secondary);
+      background: rgba(17, 17, 17, 0.95);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
       padding: 16px;
-      transform: translateY(-100%);
+      transform: translateY(-120%);
       opacity: 0;
       visibility: hidden;
       transition: var(--transition);
-      z-index: 99;
+      z-index: 999;
     }
 
     .mobile-menu.active {
@@ -179,52 +316,53 @@
     }
 
     .mobile-menu-item {
-      padding: 12px 16px;
+      padding: 14px 18px;
       background: var(--bg-tertiary);
       border-radius: var(--radius);
       color: var(--text-primary);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
       transition: var(--transition);
       border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
     }
 
     .mobile-menu-item:hover {
-      background: var(--bg-card);
+      background: var(--bg-hover);
       border-color: var(--border-light);
-      transform: translateX(4px);
+      transform: translateX(6px);
     }
 
-    .mobile-menu-item.primary {
-      background: var(--accent);
-      color: white;
-    }
-
-    .mobile-menu-item.primary:hover {
-      background: var(--accent-hover);
+    .mobile-menu-item.active {
+      background: var(--accent-light);
+      color: var(--accent);
+      border-color: var(--accent);
     }
 
     /* Main Content */
     .main-content {
-      padding-top: 72px;
-      padding-bottom: 24px;
-      padding-left: 16px;
-      padding-right: 16px;
-      min-height: 100vh;
+      padding: 88px 20px 40px;
+      max-width: 720px;
+      margin: 0 auto;
     }
 
     /* Hero Section */
     .hero {
       text-align: center;
-      padding: 40px 0;
+      padding: 20px 0 40px;
       animation: fadeInUp 0.6s ease-out;
     }
 
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(24px);
       }
       to {
         opacity: 1;
@@ -232,22 +370,52 @@
       }
     }
 
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--accent-light);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 20px;
+      animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
     .hero h1 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      line-height: 1.2;
     }
 
     .hero p {
-      font-size: 14px;
+      font-size: 16px;
       color: var(--text-secondary);
-      max-width: 300px;
+      max-width: 480px;
       margin: 0 auto;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     /* Generator Card */
@@ -255,36 +423,75 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 20px;
-      margin-top: 24px;
+      padding: 24px;
+      margin-top: 32px;
       box-shadow: var(--shadow);
-      animation: fadeInUp 0.6s ease-out 0.1s both;
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
     }
 
     .input-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .input-group label {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-secondary);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .input-group input,
     .input-group textarea,
     .input-group select {
       width: 100%;
-      padding: 12px 14px;
+      padding: 14px 16px;
       background: var(--bg-secondary);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       color: var(--text-primary);
-      font-size: 14px;
+      font-size: 15px;
       font-family: inherit;
       transition: var(--transition);
+    }
+
+    .input-group input::placeholder,
+    .input-group textarea::placeholder {
+      color: var(--text-muted);
     }
 
     .input-group input:focus,
@@ -292,88 +499,86 @@
     .input-group select:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
+      box-shadow: 0 0 0 4px var(--accent-light);
     }
 
     .input-group textarea {
-      min-height: 100px;
+      min-height: 120px;
       resize: vertical;
     }
 
     .input-group select {
       cursor: pointer;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a3a3a3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23737373' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 36px;
+      background-position: right 16px center;
+      padding-right: 44px;
     }
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
+    .select-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Code Output */
+    .output-section {
+      margin-top: 24px;
+      display: none;
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .output-section.show {
+      display: block;
+    }
+
+    .output-header {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: var(--transition);
-      border: none;
-      text-decoration: none;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
 
-    .btn-primary {
-      width: 100%;
-      padding: 14px;
-      background: var(--accent);
-      color: white;
+    .output-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
     }
 
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px var(--accent-glow);
+    .output-actions {
+      display: flex;
+      gap: 8px;
     }
 
-    .btn-primary:active {
-      transform: translateY(0);
-    }
-
-    .btn-primary:disabled {
-      background: var(--bg-tertiary);
-      color: var(--text-muted);
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .btn-secondary {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
+    .code-output {
+      background: var(--bg-primary);
       border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-card);
-      border-color: var(--border-light);
-    }
-
-    .btn-small {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .btn-icon {
-      width: 32px;
-      height: 32px;
-      padding: 0;
       border-radius: var(--radius);
+      padding: 20px;
+      max-height: 400px;
+      overflow: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
+
+    .code-output pre {
+      margin: 0;
+    }
+
+    /* Syntax Highlighting */
+    .code-output .keyword { color: #c792ea; }
+    .code-output .string { color: #c3e88d; }
+    .code-output .function { color: #82aaff; }
+    .code-output .comment { color: #546e7a; }
+    .code-output .number { color: #f78c6c; }
+    .code-output .operator { color: #89ddff; }
 
     /* Loading Spinner */
     .spinner {
@@ -389,89 +594,54 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Code Output */
-    .output-section {
-      margin-top: 20px;
-      animation: fadeInUp 0.6s ease-out 0.2s both;
-    }
-
-    .output-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .output-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .code-output {
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      max-height: 300px;
-      overflow: auto;
-      font-family: 'Monaco', 'Menlo', monospace;
-      font-size: 12px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .code-output pre {
-      margin: 0;
-    }
-
-    .code-output .keyword {
-      color: #c792ea;
-    }
-
-    .code-output .string {
-      color: #c3e88d;
-    }
-
-    .code-output .function {
-      color: #82aaff;
-    }
-
-    .code-output .comment {
-      color: #546e7a;
-    }
-
     /* Saved Codes Section */
     .saved-codes-section {
-      margin-top: 32px;
+      margin-top: 48px;
       animation: fadeInUp 0.6s ease-out 0.3s both;
     }
 
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
     .section-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--text-primary);
+    }
+
+    .section-count {
+      padding: 4px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
     }
 
     .codes-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
     .code-item {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px;
+      padding: 20px;
       transition: var(--transition);
     }
 
     .code-item:hover {
       border-color: var(--border-light);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       box-shadow: var(--shadow);
     }
 
@@ -479,27 +649,32 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
-    .code-item-title {
-      font-size: 14px;
+    .code-item-info h3 {
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-primary);
+      margin-bottom: 6px;
     }
 
-    .code-item-date {
-      font-size: 11px;
+    .code-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
     .code-item-preview {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-secondary);
-      line-height: 1.5;
-      max-height: 60px;
+      line-height: 1.6;
+      max-height: 70px;
       overflow: hidden;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .code-item-actions {
@@ -514,16 +689,16 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 200;
+      z-index: 2000;
       opacity: 0;
       visibility: hidden;
       transition: var(--transition);
-      padding: 16px;
+      padding: 20px;
     }
 
     .modal-overlay.active {
@@ -536,8 +711,8 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       width: 100%;
-      max-width: 360px;
-      padding: 24px;
+      max-width: 400px;
+      padding: 32px;
       transform: scale(0.9) translateY(20px);
       transition: var(--transition);
     }
@@ -548,17 +723,29 @@
 
     .modal-header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    .modal-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: white;
     }
 
     .modal-title {
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 22px;
+      font-weight: 700;
       margin-bottom: 8px;
     }
 
     .modal-subtitle {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-secondary);
     }
 
@@ -568,17 +755,17 @@
       background: var(--bg-tertiary);
       padding: 4px;
       border-radius: var(--radius);
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .modal-tab {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       background: transparent;
       border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--text-secondary);
       cursor: pointer;
       transition: var(--transition);
@@ -587,10 +774,6 @@
 
     .modal-tab.active {
       background: var(--bg-card);
-      color: var(--text-primary);
-    }
-
-    .modal-tab:hover:not(.active) {
       color: var(--text-primary);
     }
 
@@ -605,44 +788,43 @@
 
     .form-footer {
       text-align: center;
-      margin-top: 16px;
-      font-size: 13px;
+      margin-top: 20px;
+      font-size: 14px;
       color: var(--text-secondary);
     }
 
     .form-footer a {
       color: var(--accent);
       text-decoration: none;
-    }
-
-    .form-footer a:hover {
-      text-decoration: underline;
+      font-weight: 600;
     }
 
     /* Toast Notifications */
     .toast-container {
       position: fixed;
-      bottom: 20px;
-      right: 16px;
-      left: 16px;
+      bottom: 24px;
+      right: 24px;
+      left: 24px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      z-index: 300;
+      gap: 10px;
+      z-index: 3000;
+      pointer-events: none;
     }
 
     .toast {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 14px 16px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       box-shadow: var(--shadow-lg);
-      transform: translateY(100px);
+      transform: translateY(120px);
       opacity: 0;
       transition: var(--transition);
+      pointer-events: auto;
     }
 
     .toast.show {
@@ -654,16 +836,21 @@
       border-left: 3px solid var(--success);
     }
 
+    .toast.success .toast-icon {
+      color: var(--success);
+    }
+
     .toast.error {
       border-left: 3px solid var(--error);
     }
 
-    .toast-icon {
-      font-size: 16px;
+    .toast.error .toast-icon {
+      color: var(--error);
     }
 
     .toast-message {
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 500;
       color: var(--text-primary);
       flex: 1;
     }
@@ -680,38 +867,50 @@
     }
 
     .user-avatar {
-      width: 32px;
-      height: 32px;
-      background: var(--accent);
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       color: white;
     }
 
     .user-name {
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     /* Empty State */
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 48px 24px;
       color: var(--text-secondary);
     }
 
     .empty-state-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-      opacity: 0.5;
+      width: 64px;
+      height: 64px;
+      background: var(--bg-tertiary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: var(--text-muted);
     }
 
     .empty-state-text {
-      font-size: 14px;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .empty-state-subtext {
+      font-size: 13px;
+      color: var(--text-muted);
     }
 
     /* Responsive */
@@ -720,20 +919,20 @@
         padding: 0 32px;
       }
 
+      .nav-links {
+        display: flex;
+      }
+
       .main-content {
-        padding-left: 32px;
-        padding-right: 32px;
-        max-width: 600px;
-        margin: 0 auto;
+        padding: 100px 32px 48px;
       }
 
       .hero h1 {
-        font-size: 36px;
+        font-size: 56px;
       }
 
       .hero p {
-        font-size: 16px;
-        max-width: 400px;
+        font-size: 18px;
       }
 
       .hamburger {
@@ -741,80 +940,97 @@
       }
 
       .mobile-menu {
-        position: static;
-        transform: none;
-        opacity: 1;
-        visibility: visible;
-        background: transparent;
-        border: none;
-        padding: 0;
-      }
-
-      .desktop-nav {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .desktop-nav-item {
-        padding: 8px 16px;
-        color: var(--text-secondary);
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 500;
-        border-radius: var(--radius);
-        transition: var(--transition);
-      }
-
-      .desktop-nav-item:hover {
-        color: var(--text-primary);
-        background: var(--bg-tertiary);
-      }
-
-      .btn-primary {
-        width: auto;
+        display: none;
       }
 
       .generator-card {
-        padding: 28px;
+        padding: 32px;
+      }
+
+      .toast-container {
+        left: auto;
+        width: 380px;
       }
     }
 
     @media (max-width: 767px) {
-      .desktop-nav {
-        display: none;
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .select-row {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
   <div class="app-container">
+    <!-- Background -->
+    <div class="bg-pattern">
+      <div class="grid-overlay"></div>
+    </div>
+
     <!-- Header -->
     <header class="header">
       <a href="/" class="logo">
-        <div class="logo-icon">🤖</div>
+        <div class="logo-icon">
+          <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+        </div>
         <span>AI Coder</span>
       </a>
 
-      <nav class="desktop-nav">
-        <a href="#generate" class="desktop-nav-item">Generate</a>
-        <a href="#saved" class="desktop-nav-item">Saved</a>
-        <button class="btn btn-secondary btn-small" id="desktopLoginBtn">Login</button>
+      <nav class="nav-links">
+        <a href="#generate" class="nav-link active">
+          <i data-lucide="sparkles"></i>
+          Generate
+        </a>
+        <a href="#saved" class="nav-link">
+          <i data-lucide="folder-code"></i>
+          Saved
+        </a>
+        <a href="#about" class="nav-link">
+          <i data-lucide="info"></i>
+          About
+        </a>
       </nav>
 
-      <div class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
+      <div class="header-actions">
+        <div class="user-section" id="userSection">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <span class="user-name" id="userName">User</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="loginBtn">
+          <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
+          Login
+        </button>
+        <button class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
     </header>
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
       <div class="mobile-menu-items">
-        <a href="#generate" class="mobile-menu-item">Generate Code</a>
-        <a href="#saved" class="mobile-menu-item">Saved Codes</a>
-        <button class="mobile-menu-item primary" id="mobileLoginBtn">Login</button>
+        <a href="#generate" class="mobile-menu-item active">
+          <i data-lucide="sparkles"></i>
+          Generate Code
+        </a>
+        <a href="#saved" class="mobile-menu-item">
+          <i data-lucide="folder-code"></i>
+          Saved Codes
+        </a>
+        <a href="#about" class="mobile-menu-item">
+          <i data-lucide="info"></i>
+          About
+        </a>
+        <button class="mobile-menu-item" id="mobileLoginBtn">
+          <i data-lucide="log-in"></i>
+          Login
+        </button>
       </div>
     </div>
 
@@ -822,53 +1038,89 @@
     <main class="main-content">
       <!-- Hero -->
       <section class="hero">
-        <h1>Smart AI Code Generator</h1>
-        <p>Describe what you want to build and let AI write the code for you instantly.</p>
+        <div class="hero-badge">AI-Powered Code Generation</div>
+        <h1>Smart Code Generator</h1>
+        <p>Describe what you want to build and let AI write production-ready code instantly. Save, manage, and access your generated code from anywhere.</p>
       </section>
 
       <!-- Generator Card -->
       <section class="generator-card" id="generate">
+        <div class="card-header">
+          <div class="card-icon">
+            <i data-lucide="code" style="width: 22px; height: 22px;"></i>
+          </div>
+          <div>
+            <div class="card-title">Code Generator</div>
+            <div class="card-subtitle">Powered by advanced AI</div>
+          </div>
+        </div>
+
         <form id="codeGeneratorForm">
           <div class="input-group">
-            <label for="prompt">What do you want to build?</label>
-            <textarea id="prompt" placeholder="e.g., A responsive landing page with a contact form" required></textarea>
+            <label>
+              <i data-lucide="message-square"></i>
+              What do you want to build?
+            </label>
+            <textarea id="prompt" placeholder="e.g., A responsive login form with email validation and forgot password functionality..." required></textarea>
           </div>
 
-          <div class="input-group">
-            <label for="language">Programming Language</label>
-            <select id="language">
-              <option value="javascript">JavaScript</option>
-              <option value="python">Python</option>
-              <option value="html">HTML/CSS</option>
-              <option value="typescript">TypeScript</option>
-              <option value="react">React</option>
-            </select>
+          <div class="select-row">
+            <div class="input-group">
+              <label>
+                <i data-lucide="languages"></i>
+                Language
+              </label>
+              <select id="language">
+                <option value="javascript">JavaScript</option>
+                <option value="typescript">TypeScript</option>
+                <option value="python">Python</option>
+                <option value="html">HTML/CSS</option>
+                <option value="react">React</option>
+                <option value="vue">Vue.js</option>
+                <option value="go">Go</option>
+                <option value="rust">Rust</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label>
+                <i data-lucide="box"></i>
+                Framework
+              </label>
+              <select id="framework">
+                <option value="">None</option>
+                <option value="vanilla">Vanilla</option>
+                <option value="express">Express.js</option>
+                <option value="nextjs">Next.js</option>
+                <option value="fastapi">FastAPI</option>
+                <option value="flask">Flask</option>
+                <option value="django">Django</option>
+              </select>
+            </div>
           </div>
 
-          <div class="input-group">
-            <label for="framework">Framework (Optional)</label>
-            <select id="framework">
-              <option value="">None</option>
-              <option value="vanilla">Vanilla</option>
-              <option value="express">Express.js</option>
-              <option value="nextjs">Next.js</option>
-              <option value="fastapi">FastAPI</option>
-              <option value="flask">Flask</option>
-            </select>
-          </div>
-
-          <button type="submit" class="btn btn-primary" id="generateBtn">
-            <span>Generate Code</span>
+          <button type="submit" class="btn btn-primary" id="generateBtn" style="width: 100%; margin-top: 8px;">
+            <i data-lucide="sparkles" style="width: 18px; height: 18px;"></i>
+            Generate Code
           </button>
         </form>
 
         <!-- Output Section -->
-        <div class="output-section" id="outputSection" style="display: none;">
+        <div class="output-section" id="outputSection">
           <div class="output-header">
-            <span class="output-title">Generated Code</span>
-            <div>
-              <button class="btn btn-secondary btn-small" id="copyBtn">Copy</button>
-              <button class="btn btn-secondary btn-small" id="saveBtn">Save</button>
+            <div class="output-title">
+              <i data-lucide="check-circle" style="color: var(--success);"></i>
+              Generated Code
+            </div>
+            <div class="output-actions">
+              <button class="btn btn-secondary btn-sm" id="copyBtn">
+                <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                Copy
+              </button>
+              <button class="btn btn-primary btn-sm" id="saveBtn">
+                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                Save
+              </button>
             </div>
           </div>
           <div class="code-output" id="codeOutput"></div>
@@ -877,11 +1129,20 @@
 
       <!-- Saved Codes -->
       <section class="saved-codes-section" id="saved">
-        <h2 class="section-title">Your Saved Codes</h2>
+        <div class="section-header">
+          <div class="section-title">
+            <i data-lucide="folder-code"></i>
+            Your Saved Codes
+          </div>
+          <span class="section-count" id="codesCount">0</span>
+        </div>
         <div class="codes-list" id="codesList">
           <div class="empty-state">
-            <div class="empty-state-icon">📝</div>
-            <p class="empty-state-text">No saved codes yet. Generate and save your first code!</p>
+            <div class="empty-state-icon">
+              <i data-lucide="file-code"></i>
+            </div>
+            <p class="empty-state-text">No saved codes yet</p>
+            <p class="empty-state-subtext">Generate and save your first code!</p>
           </div>
         </div>
       </section>
@@ -892,43 +1153,52 @@
   <div class="modal-overlay" id="authModal">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">Welcome</h2>
+        <div class="modal-icon">
+          <i data-lucide="user" style="width: 28px; height: 28px;"></i>
+        </div>
+        <h2 class="modal-title">Welcome Back</h2>
         <p class="modal-subtitle">Sign in to save your generated code</p>
       </div>
 
       <div class="modal-tabs">
-        <button class="modal-tab active" data-tab="login">Login</button>
-        <button class="modal-tab" data-tab="register">Register</button>
+        <button class="modal-tab active" data-tab="login">Sign In</button>
+        <button class="modal-tab" data-tab="register">Create Account</button>
       </div>
 
       <!-- Login Form -->
       <form class="auth-form active" id="loginForm">
         <div class="input-group">
-          <label for="loginEmail">Email</label>
-          <input type="email" id="loginEmail" placeholder="your@email.com" required>
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" required>
         </div>
         <div class="input-group">
-          <label for="loginPassword">Password</label>
+          <label>Password</label>
           <input type="password" id="loginPassword" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn btn-primary">Sign In</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
+          Sign In
+        </button>
       </form>
 
       <!-- Register Form -->
       <form class="auth-form" id="registerForm">
         <div class="input-group">
-          <label for="registerName">Name</label>
-          <input type="text" id="registerName" placeholder="Your name" required>
+          <label>Full Name</label>
+          <input type="text" id="registerName" placeholder="John Doe" required>
         </div>
         <div class="input-group">
-          <label for="registerEmail">Email</label>
-          <input type="email" id="registerEmail" placeholder="your@email.com" required>
+          <label>Email Address</label>
+          <input type="email" id="registerEmail" placeholder="you@example.com" required>
         </div>
         <div class="input-group">
-          <label for="registerPassword">Password</label>
+          <label>Password</label>
           <input type="password" id="registerPassword" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn btn-primary">Create Account</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
+          Create Account
+        </button>
       </form>
     </div>
   </div>
@@ -936,6 +1206,10 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
   <script src="/public/js/auth.js"></script>
   <script src="/public/js/app.js"></script>
 </body>

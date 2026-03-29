@@ -3,6 +3,8 @@
   // DOM Elements
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
+  const mobileMenuItems = document.querySelectorAll('.mobile-menu-item');
+  const navLinks = document.querySelectorAll('.nav-link');
   const codeGeneratorForm = document.getElementById('codeGeneratorForm');
   const generateBtn = document.getElementById('generateBtn');
   const outputSection = document.getElementById('outputSection');
@@ -10,6 +12,7 @@
   const copyBtn = document.getElementById('copyBtn');
   const saveBtn = document.getElementById('saveBtn');
   const codesList = document.getElementById('codesList');
+  const codesCount = document.getElementById('codesCount');
 
   // State
   let currentCode = '';
@@ -21,6 +24,7 @@
   function init() {
     bindEvents();
     loadSavedCodes();
+    updateLucideIcons();
   }
 
   // Bind events
@@ -31,9 +35,13 @@
     }
 
     // Mobile menu links
-    const mobileMenuItems = document.querySelectorAll('.mobile-menu-item');
     mobileMenuItems.forEach(item => {
-      item.addEventListener('click', closeMobileMenu);
+      item.addEventListener('click', handleMenuItemClick);
+    });
+
+    // Desktop nav links
+    navLinks.forEach(link => {
+      link.addEventListener('click', handleNavClick);
     });
 
     // Code generation form
@@ -63,8 +71,42 @@
 
   // Close mobile menu
   function closeMobileMenu() {
-    hamburger.classList.remove('active');
-    mobileMenu.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('active');
+    if (mobileMenu) mobileMenu.classList.remove('active');
+  }
+
+  // Handle menu item click
+  function handleMenuItemClick(e) {
+    const href = e.currentTarget.getAttribute('href');
+    if (href && href !== '#') {
+      closeMobileMenu();
+      updateActiveLinks(href);
+    }
+  }
+
+  // Handle nav click
+  function handleNavClick(e) {
+    const href = e.currentTarget.getAttribute('href');
+    if (href) {
+      updateActiveLinks(href);
+    }
+  }
+
+  // Update active links
+  function updateActiveLinks(href) {
+    mobileMenuItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.getAttribute('href') === href) {
+        item.classList.add('active');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === href) {
+        link.classList.add('active');
+      }
+    });
   }
 
   // Handle code generation
@@ -91,14 +133,8 @@
     try {
       const response = await fetch('/generate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt,
-          language,
-          framework
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, language, framework }),
       });
 
       const data = await response.json();
@@ -122,45 +158,38 @@
   function displayCode(code) {
     if (!codeOutput || !outputSection) return;
 
-    // Format and syntax highlight
     const formattedCode = formatCode(code);
     codeOutput.innerHTML = `<pre>${highlightSyntax(formattedCode)}</pre>`;
-    outputSection.style.display = 'block';
+    outputSection.classList.add('show');
+    updateLucideIcons();
     
-    // Scroll to output
     outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // Format code (basic indentation)
+  // Format code
   function formatCode(code) {
     return code;
   }
 
-  // Syntax highlighting (basic)
+  // Syntax highlighting
   function highlightSyntax(code) {
-    // Escape HTML first
     let escaped = code
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-    // Simple syntax highlighting patterns
     const patterns = [
-      // Comments
       { pattern: /(\/\/.*$)/gm, class: 'comment' },
       { pattern: /(\/\*[\s\S]*?\*\/)/g, class: 'comment' },
       { pattern: /(#.*$)/gm, class: 'comment' },
-      // Strings
       { pattern: /("(?:[^"\\]|\\.)*")/g, class: 'string' },
       { pattern: /('(?:[^'\\]|\\.)*')/g, class: 'string' },
       { pattern: /(`(?:[^`\\]|\\.)*`)/g, class: 'string' },
-      // Keywords
-      { pattern: /\b(function|const|let|var|if|else|for|while|return|import|export|class|extends|new|this|async|await|try|catch|throw|def|import|from|as|with|lambda)\b/g, class: 'keyword' },
-      // Functions
+      { pattern: /\b(function|const|let|var|if|else|for|while|return|import|export|class|extends|new|this|async|await|try|catch|throw|def|from|as|with|lambda)\b/g, class: 'keyword' },
+      { pattern: /\b(\d+)\b/g, class: 'number' },
       { pattern: /\b(\w+)(?=\s*\()/g, class: 'function' },
     ];
 
-    // Apply patterns
     patterns.forEach(({ pattern, class: className }) => {
       escaped = escaped.replace(pattern, `<span class="${className}">$1</span>`);
     });
@@ -179,7 +208,6 @@
       await navigator.clipboard.writeText(currentCode);
       showToast('Copied to clipboard!', 'success');
     } catch (error) {
-      // Fallback
       const textarea = document.createElement('textarea');
       textarea.value = currentCode;
       document.body.appendChild(textarea);
@@ -203,7 +231,6 @@
       return;
     }
 
-    // Generate title from prompt
     const title = currentPrompt.slice(0, 50) + (currentPrompt.length > 50 ? '...' : '');
 
     try {
@@ -240,23 +267,25 @@
   async function loadSavedCodes() {
     if (!codesList) return;
 
-    // Check if user is authenticated
     if (!window.Auth || !window.Auth.isAuthenticated()) {
       codesList.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">🔐</div>
-          <p class="empty-state-text">Login to save and view your generated code</p>
+          <div class="empty-state-icon">
+            <i data-lucide="lock"></i>
+          </div>
+          <p class="empty-state-text">Login to save and view your code</p>
+          <p class="empty-state-subtext">Your saved codes will appear here</p>
         </div>
       `;
+      if (codesCount) codesCount.textContent = '0';
+      updateLucideIcons();
       return;
     }
 
     try {
       const response = await fetch('/get-codes', {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${window.Auth.getToken()}`,
-        },
+        headers: { 'Authorization': `Bearer ${window.Auth.getToken()}` },
       });
 
       const data = await response.json();
@@ -270,10 +299,14 @@
       console.error('Load codes error:', error);
       codesList.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">😕</div>
+          <div class="empty-state-icon">
+            <i data-lucide="alert-circle"></i>
+          </div>
           <p class="empty-state-text">Failed to load saved codes</p>
+          <p class="empty-state-subtext">Please try again later</p>
         </div>
       `;
+      updateLucideIcons();
     }
   }
 
@@ -281,30 +314,53 @@
   function displaySavedCodes(codes) {
     if (!codesList) return;
 
-    if (!codes || codes.length === 0) {
+    const count = codes ? codes.length : 0;
+    if (codesCount) codesCount.textContent = count;
+
+    if (!codes || count === 0) {
       codesList.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">📝</div>
-          <p class="empty-state-text">No saved codes yet. Generate and save your first code!</p>
+          <div class="empty-state-icon">
+            <i data-lucide="file-code"></i>
+          </div>
+          <p class="empty-state-text">No saved codes yet</p>
+          <p class="empty-state-subtext">Generate and save your first code!</p>
         </div>
       `;
+      updateLucideIcons();
       return;
     }
 
     codesList.innerHTML = codes.map(code => `
       <div class="code-item" data-id="${code.id}">
         <div class="code-item-header">
-          <span class="code-item-title">${escapeHtml(code.title)}</span>
-          <span class="code-item-date">${formatDate(code.created_at)}</span>
+          <div class="code-item-info">
+            <h3>${escapeHtml(code.title)}</h3>
+            <div class="code-item-meta">
+              <span><i data-lucide="code"></i>${escapeHtml(code.language)}</span>
+              <span><i data-lucide="calendar"></i>${formatDate(code.created_at)}</span>
+            </div>
+          </div>
         </div>
         <div class="code-item-preview">${escapeHtml(code.code.slice(0, 150))}...</div>
         <div class="code-item-actions">
-          <button class="btn btn-secondary btn-small" onclick="viewCode(${code.id})">View</button>
-          <button class="btn btn-secondary btn-small" onclick="copyCode('${escapeForAttr(code.code)}')">Copy</button>
-          <button class="btn btn-secondary btn-small" onclick="deleteCode(${code.id})">Delete</button>
+          <button class="btn btn-secondary btn-sm" onclick="viewCode(${code.id})">
+            <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+            View
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="copyCode('${escapeForAttr(code.code)}')">
+            <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+            Copy
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="deleteCode(${code.id})">
+            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+            Delete
+          </button>
         </div>
       </div>
     `).join('');
+
+    updateLucideIcons();
   }
 
   // View saved code
@@ -312,9 +368,7 @@
     try {
       const response = await fetch(`/get-code/${id}`, {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${window.Auth.getToken()}`,
-        },
+        headers: { 'Authorization': `Bearer ${window.Auth.getToken()}` },
       });
 
       const data = await response.json();
@@ -346,16 +400,12 @@
 
   // Delete saved code
   window.deleteCode = async function(id) {
-    if (!confirm('Are you sure you want to delete this code?')) {
-      return;
-    }
+    if (!confirm('Are you sure you want to delete this code?')) return;
 
     try {
       const response = await fetch(`/delete-code/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${window.Auth.getToken()}`,
-        },
+        headers: { 'Authorization': `Bearer ${window.Auth.getToken()}` },
       });
 
       const data = await response.json();
@@ -378,14 +428,15 @@
 
     if (loading) {
       generateBtn.disabled = true;
-      generateBtn.innerHTML = '<span class="spinner"></span><span>Generating...</span>';
+      generateBtn.innerHTML = '<span class="spinner"></span><i data-lucide="loader-2" class="spinner" style="width: 18px; height: 18px; animation: spin 0.8s linear infinite;"></i>Generating...';
     } else {
       generateBtn.disabled = false;
-      generateBtn.innerHTML = '<span>Generate Code</span>';
+      generateBtn.innerHTML = '<i data-lucide="sparkles" style="width: 18px; height: 18px;"></i>Generate Code';
     }
+    updateLucideIcons();
   }
 
-  // Handle scroll for animations
+  // Handle scroll
   function handleScroll() {
     const elements = document.querySelectorAll('.code-item');
     elements.forEach(el => {
@@ -397,6 +448,13 @@
     });
   }
 
+  // Update Lucide icons
+  function updateLucideIcons() {
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
+
   // Show toast notification
   function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
@@ -405,16 +463,14 @@
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `
-      <span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span>
+      <i data-lucide="${type === 'success' ? 'check-circle' : 'x-circle'}" class="toast-icon"></i>
       <span class="toast-message">${message}</span>
     `;
 
     container.appendChild(toast);
+    updateLucideIcons();
 
-    // Trigger animation
     setTimeout(() => toast.classList.add('show'), 10);
-
-    // Remove after 3 seconds
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 300);
@@ -441,11 +497,7 @@
   // Utility: Format date
   function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   // Initialize when DOM is ready
@@ -455,9 +507,5 @@
     init();
   }
 
-  // Expose functions globally
-  window.App = {
-    loadSavedCodes,
-    showToast
-  };
+  window.App = { loadSavedCodes, showToast };
 })();

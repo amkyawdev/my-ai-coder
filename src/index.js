@@ -1,8 +1,8 @@
-import { generateCode } from './src/routes/generate.js';
-import { saveCode, getCodes, getCode, deleteCode } from './src/routes/save-code.js';
-import { login, register } from './src/routes/auth.js';
-import { corsMiddleware } from './src/utils/cors.js';
-import { authMiddleware } from './src/utils/auth.js';
+import { generateCode } from './routes/generate.js';
+import { saveCode, getCodes, getCode, deleteCode } from './routes/save-code.js';
+import { login, register } from './routes/auth.js';
+import { corsMiddleware } from './utils/cors.js';
+import { authMiddleware } from './utils/auth.js';
 
 export default {
   async fetch(request, env, ctx) {
