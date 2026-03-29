@@ -967,6 +967,417 @@
       }
     }
 
+    .page {
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Chat Page */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 120px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+
+    .chat-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .chat-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .chat-message {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .chat-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chat-message.bot .chat-avatar {
+      background: var(--accent);
+      color: white;
+    }
+
+    .chat-message.user .chat-avatar {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+    }
+
+    .chat-content {
+      background: var(--bg-secondary);
+      padding: 14px 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+    }
+
+    .chat-message.user .chat-content {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+
+    .chat-content p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .chat-input {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
+      display: flex;
+      gap: 12px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 14px 18px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .chat-input .btn {
+      padding: 14px 20px;
+    }
+
+    /* Dashboard Page */
+    .dashboard-header {
+      margin-bottom: 28px;
+    }
+
+    .dashboard-header h2 {
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .dashboard-header p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-light);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .recent-activity-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+
+    .activity-info {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .activity-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Docs Page */
+    .docs-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 24px;
+      min-height: calc(100vh - 140px);
+    }
+
+    .docs-sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      height: fit-content;
+      position: sticky;
+      top: 88px;
+    }
+
+    .docs-search {
+      margin-bottom: 20px;
+    }
+
+    .docs-search input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .docs-search input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .docs-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .docs-link {
+      padding: 12px 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+
+    .docs-link:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .docs-link.active {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .docs-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+    }
+
+    .docs-content h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .docs-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+    }
+
+    .docs-content p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .docs-content ol, .docs-content ul {
+      margin-left: 20px;
+      margin-bottom: 16px;
+    }
+
+    .docs-content li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    /* About Page */
+    .about-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .about-container h2 {
+      font-size: 28px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .about-content h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 28px 0 14px;
+    }
+
+    .about-content p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .features-list {
+      list-style: none;
+      margin-left: 0;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+    }
+
+    .features-list li i {
+      color: var(--accent);
+      width: 20px;
+      height: 20px;
+    }
+
+    .tech-stack {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tech-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Page content padding */
+    .page-content {
+      padding: 88px 24px 40px;
+    }
     @media (max-width: 767px) {
       .hero h1 {
         font-size: 32px;
@@ -974,6 +1385,36 @@
 
       .select-row {
         grid-template-columns: 1fr;
+      }
+
+      .page-content {
+        padding: 80px 16px 24px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-container {
+        height: calc(100vh - 160px);
+      }
+
+      .docs-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .docs-sidebar {
+        position: fixed;
+        left: -100%;
+        top: 64px;
+        width: 280px;
+        height: calc(100vh - 64px);
+        z-index: 100;
+        transition: left 0.3s ease;
+      }
+
+      .docs-sidebar.active {
+        left: 0;
       }
     }
   </style>
@@ -987,7 +1428,7 @@
 
     <!-- Header -->
     <header class="header">
-      <a href="/" class="logo">
+      <a href="#" class="logo" onclick="showPage('home')">
         <div class="logo-icon">
           <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
         </div>
@@ -995,15 +1436,23 @@
       </a>
 
       <nav class="nav-links">
-        <a href="#generate" class="nav-link active" onclick="scrollToSection('generate')">
+        <a href="#" class="nav-link" onclick="showPage('home')" data-page="home">
           <i data-lucide="sparkles"></i>
           Generate
         </a>
-        <a href="#saved" class="nav-link" onclick="scrollToSection('saved')">
-          <i data-lucide="folder-code"></i>
-          Saved
+        <a href="#" class="nav-link" onclick="showPage('chat')" data-page="chat">
+          <i data-lucide="message-square"></i>
+          Chat
         </a>
-        <a href="#about" class="nav-link" onclick="scrollToSection('about')">
+        <a href="#" class="nav-link" onclick="showPage('dashboard')" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          Dashboard
+        </a>
+        <a href="#" class="nav-link" onclick="showPage('docs')" data-page="docs">
+          <i data-lucide="book-open"></i>
+          Docs
+        </a>
+        <a href="#" class="nav-link" onclick="showPage('about')" data-page="about">
           <i data-lucide="info"></i>
           About
         </a>
@@ -1029,15 +1478,23 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
       <div class="mobile-menu-items">
-        <a href="#generate" class="mobile-menu-item" onclick="scrollToSection('generate')">
+        <a href="#" class="mobile-menu-item" onclick="showPage('home'); toggleMenu()">
           <i data-lucide="sparkles"></i>
           Generate Code
         </a>
-        <a href="#saved" class="mobile-menu-item" onclick="scrollToSection('saved')">
-          <i data-lucide="folder-code"></i>
-          Saved Codes
+        <a href="#" class="mobile-menu-item" onclick="showPage('chat'); toggleMenu()">
+          <i data-lucide="message-square"></i>
+          Chat
         </a>
-        <a href="#about" class="mobile-menu-item" onclick="scrollToSection('about')">
+        <a href="#" class="mobile-menu-item" onclick="showPage('dashboard'); toggleMenu()">
+          <i data-lucide="layout-dashboard"></i>
+          Dashboard
+        </a>
+        <a href="#" class="mobile-menu-item" onclick="showPage('docs'); toggleMenu()">
+          <i data-lucide="book-open"></i>
+          Docs
+        </a>
+        <a href="#" class="mobile-menu-item" onclick="showPage('about'); toggleMenu()">
           <i data-lucide="info"></i>
           About
         </a>
@@ -1049,13 +1506,15 @@
     </div>
 
     <!-- Main Content -->
-    <main class="main-content">
-      <!-- Hero -->
-      <section class="hero">
-        <div class="hero-badge">AI-Powered Code Generation</div>
-        <h1>Smart Code Generator</h1>
-        <p>Describe what you want to build and let AI write production-ready code instantly. Save, manage, and access your generated code from anywhere.</p>
-      </section>
+    <main class="main-content" id="mainContent">
+      <!-- Home Page (Code Generator) -->
+      <div id="page-home" class="page">
+        <!-- Hero -->
+        <section class="hero">
+          <div class="hero-badge">AI-Powered Code Generation</div>
+          <h1>Smart Code Generator</h1>
+          <p>Describe what you want to build and let AI write production-ready code instantly. Save, manage, and access your generated code from anywhere.</p>
+        </section>
 
       <!-- Generator Card -->
       <section class="generator-card" id="generate">
@@ -1160,29 +1619,147 @@
           </div>
         </div>
       </section>
+      </div> <!-- End page-home -->
 
-      <!-- About Section -->
-      <section class="about-section" id="about" style="margin-top: 48px; padding-bottom: 40px;">
-        <div class="section-header">
-          <div class="section-title">
-            <i data-lucide="info"></i>
-            About AI Coder
+      <!-- Chat Page -->
+      <div id="page-chat" class="page" style="display: none;">
+        <div class="chat-container">
+          <div class="chat-header">
+            <h2><i data-lucide="message-square"></i> AI Code Chat</h2>
+            <p>Ask questions about code and get instant answers</p>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">
+              <div class="chat-avatar"><i data-lucide="bot"></i></div>
+              <div class="chat-content">
+                <p>Hello! I'm your AI coding assistant. Ask me anything about code, programming, or ask me to generate code for you!</p>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Ask me about code..." />
+            <button class="btn btn-primary" onclick="sendChatMessage()">
+              <i data-lucide="send"></i>
+            </button>
           </div>
         </div>
-        <div class="about-card" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
-          <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.7;">
-            AI Coder is a smart code generator that helps developers create production-ready code instantly using artificial intelligence. Simply describe what you want to build, and our AI will generate the code for you.
-          </p>
-          <p style="color: var(--text-secondary); line-height: 1.7;">
-            Built with modern web technologies including Cloudflare Workers, Neon PostgreSQL, and OpenAI for intelligent code generation.
-          </p>
-          <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-            <span style="padding: 6px 12px; background: var(--bg-tertiary); border-radius: var(--radius); font-size: 13px; color: var(--text-secondary);">Cloudflare Workers</span>
-            <span style="padding: 6px 12px; background: var(--bg-tertiary); border-radius: var(--radius); font-size: 13px; color: var(--text-secondary);">Neon DB</span>
-            <span style="padding: 6px 12px; background: var(--bg-tertiary); border-radius: var(--radius); font-size: 13px; color: var(--text-secondary);">OpenAI</span>
+      </div>
+
+      <!-- Dashboard Page -->
+      <div id="page-dashboard" class="page" style="display: none;">
+        <div class="dashboard-header">
+          <h2><i data-lucide="layout-dashboard"></i> Dashboard</h2>
+          <p>Your code generation statistics</p>
+        </div>
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="code"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="totalCodes">0</div>
+              <div class="stat-label">Total Codes</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="calendar"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="thisMonth">0</div>
+              <div class="stat-label">This Month</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="clock"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="recentActivity">0</div>
+              <div class="stat-label">Recent Activity</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="star"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="favoriteLang">-</div>
+              <div class="stat-label">Top Language</div>
+            </div>
           </div>
         </div>
-      </section>
+        <div class="recent-activity-section">
+          <h3><i data-lucide="history"></i> Recent Activity</h3>
+          <div class="activity-list" id="activityList">
+            <div class="empty-state">
+              <div class="empty-state-icon"><i data-lucide="activity"></i></div>
+              <p class="empty-state-text">No recent activity</p>
+              <p class="empty-state-subtext">Generate some code to see your activity here</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Docs Page -->
+      <div id="page-docs" class="page" style="display: none;">
+        <div class="docs-layout">
+          <aside class="docs-sidebar">
+            <div class="docs-search">
+              <input type="text" id="docsSearch" placeholder="Search docs..." oninput="searchDocs()" />
+            </div>
+            <nav class="docs-nav">
+              <a href="#" onclick="showDoc('getting-started')" class="docs-link active">Getting Started</a>
+              <a href="#" onclick="showDoc('authentication')" class="docs-link">Authentication</a>
+              <a href="#" onclick="showDoc('api-reference')" class="docs-link">API Reference</a>
+              <a href="#" onclick="showDoc('code-generation')" class="docs-link">Code Generation</a>
+              <a href="#" onclick="showDoc('examples')" class="docs-link">Examples</a>
+              <a href="#" onclick="showDoc('faq')" class="docs-link">FAQ</a>
+            </nav>
+          </aside>
+          <div class="docs-content">
+            <div id="doc-content">
+              <h2>Getting Started</h2>
+              <p>Welcome to AI Coder! This documentation will help you get started with our platform.</p>
+              <h3>Quick Start</h3>
+              <ol>
+                <li>Create an account or login</li>
+                <li>Enter a description of what you want to build</li>
+                <li>Select your preferred programming language</li>
+                <li>Click Generate and get your code!</li>
+              </ol>
+              <h3>Features</h3>
+              <ul>
+                <li><strong>AI Code Generation</strong> - Describe what you want and get code instantly</li>
+                <li><strong>Multiple Languages</strong> - Support for JavaScript, Python, TypeScript, and more</li>
+                <li><strong>Save & Manage</strong> - Save your generated code for later</li>
+                <li><strong>Chat Interface</strong> - Ask questions and get coding help</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Page -->
+      <div id="page-about" class="page" style="display: none;">
+        <div class="about-container">
+          <h2><i data-lucide="info"></i> About AI Coder</h2>
+          <div class="about-content">
+            <p>AI Coder is a smart code generator that helps developers create production-ready code instantly using artificial intelligence.</p>
+            
+            <h3>Features</h3>
+            <ul class="features-list">
+              <li><i data-lucide="sparkles"></i> <strong>AI-Powered Generation</strong> - Describe what you want to build</li>
+              <li><i data-lucide="message-square"></i> <strong>Chat Interface</strong> - Ask coding questions</li>
+              <li><i data-lucide="layout-dashboard"></i> <strong>Dashboard</strong> - Track your usage</li>
+              <li><i data-lucide="book-open"></i> <strong>Documentation</strong> - Full documentation</li>
+            </ul>
+
+            <h3>Tech Stack</h3>
+            <div class="tech-stack">
+              <span class="tech-badge"><i data-lucide="cloud"></i> Cloudflare Workers</span>
+              <span class="tech-badge"><i data-lucide="database"></i> Neon DB</span>
+              <span class="tech-badge"><i data-lucide="cpu"></i> OpenAI</span>
+              <span class="tech-badge"><i data-lucide="code"></i> Vanilla JS</span>
+            </div>
+
+            <h3>Version</h3>
+            <p>Current Version: 1.0.0</p>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -1290,6 +1867,218 @@
           section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 100);
+    }
+
+    // Show page function
+    function showPage(pageName) {
+      event.preventDefault();
+      
+      // Hide all pages
+      var pages = document.querySelectorAll('.page');
+      pages.forEach(function(page) {
+        page.style.display = 'none';
+      });
+      
+      // Show selected page
+      var selectedPage = document.getElementById('page-' + pageName);
+      if (selectedPage) {
+        selectedPage.style.display = 'block';
+      }
+      
+      // Update nav links
+      var navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(function(link) {
+        link.classList.remove('active');
+        if (link.getAttribute('data-page') === pageName) {
+          link.classList.add('active');
+        }
+      });
+      
+      // Close mobile menu
+      var mobileMenu = document.getElementById('mobileMenu');
+      var hamburger = document.getElementById('hamburger');
+      if (mobileMenu) mobileMenu.classList.remove('active');
+      if (hamburger) hamburger.classList.remove('active');
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Reinitialize Lucide icons
+      lucide.createIcons();
+      
+      // Load page-specific data
+      if (pageName === 'dashboard') {
+        loadDashboardData();
+      }
+    }
+
+    // Chat functions
+    function sendChatMessage() {
+      var chatInput = document.getElementById('chatInput');
+      var message = chatInput.value.trim();
+      if (!message) return;
+      
+      // Add user message
+      var chatMessages = document.getElementById('chatMessages');
+      var userMsg = document.createElement('div');
+      userMsg.className = 'chat-message user';
+      userMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="user"></i></div><div class="chat-content"><p>' + escapeHtml(message) + '</p></div>';
+      chatMessages.appendChild(userMsg);
+      
+      // Clear input
+      chatInput.value = '';
+      
+      // Show loading
+      var loadingMsg = document.createElement('div');
+      loadingMsg.className = 'chat-message bot';
+      loadingMsg.id = 'loadingMessage';
+      loadingMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="bot"></i></div><div class="chat-content"><p><span class="spinner"></span> Thinking...</p></div>';
+      chatMessages.appendChild(loadingMsg);
+      lucide.createIcons();
+      
+      // Scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      // Send to API
+      fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message })
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        var loading = document.getElementById('loadingMessage');
+        if (loading) loading.remove();
+        
+        var botMsg = document.createElement('div');
+        botMsg.className = 'chat-message bot';
+        botMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="bot"></i></div><div class="chat-content"><p>' + escapeHtml(data.response || 'Sorry, I could not process your request.') + '</p></div>';
+        chatMessages.appendChild(botMsg);
+        lucide.createIcons();
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      })
+      .catch(function(error) {
+        var loading = document.getElementById('loadingMessage');
+        if (loading) loading.remove();
+        
+        var botMsg = document.createElement('div');
+        botMsg.className = 'chat-message bot';
+        botMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="bot"></i></div><div class="chat-content"><p>Sorry, there was an error. Please try again.</p></div>';
+        chatMessages.appendChild(botMsg);
+        lucide.createIcons();
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    }
+
+    // Chat input enter key
+    document.addEventListener('DOMContentLoaded', function() {
+      var chatInput = document.getElementById('chatInput');
+      if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            sendChatMessage();
+          }
+        });
+      }
+    });
+
+    // Dashboard functions
+    function loadDashboardData() {
+      if (!window.Auth || !window.Auth.isAuthenticated()) {
+        return;
+      }
+      
+      fetch('/get-codes', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + window.Auth.getToken() }
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        if (data.codes) {
+          var totalCodes = document.getElementById('totalCodes');
+          var thisMonth = document.getElementById('thisMonth');
+          var recentActivity = document.getElementById('recentActivity');
+          var favoriteLang = document.getElementById('favoriteLang');
+          
+          if (totalCodes) totalCodes.textContent = data.codes.length;
+          
+          // This month
+          var now = new Date();
+          var thisMonthCount = data.codes.filter(function(c) {
+            var d = new Date(c.created_at);
+            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+          }).length;
+          if (thisMonth) thisMonth.textContent = thisMonthCount;
+          
+          // Recent (last 7 days)
+          var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          var recentCount = data.codes.filter(function(c) {
+            return new Date(c.created_at) > weekAgo;
+          }).length;
+          if (recentActivity) recentActivity.textContent = recentCount;
+          
+          // Top language
+          if (data.codes.length > 0) {
+            var langs = {};
+            data.codes.forEach(function(c) {
+              langs[c.language] = (langs[c.language] || 0) + 1;
+            });
+            var topLang = Object.keys(langs).reduce(function(a, b) {
+              return langs[a] > langs[b] ? a : b;
+            });
+            if (favoriteLang) favoriteLang.textContent = topLang || '-';
+          }
+        }
+      })
+      .catch(function(error) {
+        console.error('Error loading dashboard:', error);
+      });
+    }
+
+    // Docs functions
+    function showDoc(docId) {
+      event.preventDefault();
+      
+      var docs = {
+        'getting-started': '<h2>Getting Started</h2><p>Welcome to AI Coder! This documentation will help you get started.</p><h3>Quick Start</h3><ol><li>Create an account or login</li><li>Enter a description of what you want to build</li><li>Select your preferred programming language</li><li>Click Generate and get your code!</li></ol>',
+        'authentication': '<h2>Authentication</h2><p>Learn how to authenticate with the AI Coder API.</p><h3>Login</h3><p>Send a POST request to /auth/login with email and password.</p><h3>Register</h3><p>Send a POST request to /auth/register with name, email, and password.</p>',
+        'api-reference': '<h2>API Reference</h2><p>Complete API documentation.</p><h3>Code Generation</h3><p>POST /generate - Generate code from prompt</p><h3>Save Code</h3><p>POST /save-code - Save generated code (requires auth)</p>',
+        'code-generation': '<h2>Code Generation</h2><p>Learn how to generate code using AI.</p><h3>Supported Languages</h3><ul><li>JavaScript</li><li>TypeScript</li><li>Python</li><li>HTML/CSS</li><li>React</li><li>And more...</li></ul>',
+        'examples': '<h2>Examples</h2><p>Code examples and use cases.</p><h3>Example 1: Simple Function</h3><p>Input: "Create a function to calculate factorial"</p><h3>Example 2: API Endpoint</h3><p>Input: "Create a REST API endpoint for user login"</p>',
+        'faq': '<h2>FAQ</h2><h3>Is it free?</h3><p>Yes, basic usage is free with limited code generation.</p><h3>What languages are supported?</h3><p>JavaScript, TypeScript, Python, HTML, CSS, React, and more.</p>'
+      };
+      
+      var docContent = document.getElementById('doc-content');
+      if (docContent && docs[docId]) {
+        docContent.innerHTML = docs[docId];
+      }
+      
+      // Update active link
+      var links = document.querySelectorAll('.docs-link');
+      links.forEach(function(link) {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function searchDocs() {
+      var query = document.getElementById('docsSearch').value.toLowerCase();
+      var links = document.querySelectorAll('.docs-link');
+      links.forEach(function(link) {
+        var text = link.textContent.toLowerCase();
+        if (text.includes(query) || query === '') {
+          link.style.display = 'block';
+        } else {
+          link.style.display = 'none';
+        }
+      });
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
     
     // Initialize Lucide icons
