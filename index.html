@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Coder - Smart Code Generator</title>
+  <title>AI Coder - Smart Code Generator Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,1441 +21,362 @@
       --accent: #6366f1;
       --accent-hover: #818cf8;
       --accent-light: rgba(99, 102, 241, 0.15);
-      --accent-glow: rgba(99, 102, 241, 0.25);
       --border: #262626;
       --border-light: #333333;
       --success: #10b981;
       --error: #f43f5e;
-      --warning: #f59e0b;
-      --radius-sm: 6px;
-      --radius: 10px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+      --radius-sm: 5px;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --transition: all 0.2s ease;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
-      line-height: 1.6;
     }
-
-    /* Animated Background */
     .bg-pattern {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
+      background: radial-gradient(ellipse at 20% 20%, rgba(99,102,241,0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.04) 0%, transparent 50%);
     }
+    .app-container { position: relative; z-index: 1; }
 
-    .bg-pattern::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 60%);
-      animation: bgMove 20s ease-in-out infinite;
-    }
-
-    @keyframes bgMove {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      50% { transform: translate(-2%, -2%) rotate(1deg); }
-    }
-
-    .grid-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
-    }
-
-    .app-container {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-    }
-
-    /* Header */
+    /* Header - Small */
     .header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 64px;
-      background: rgba(8, 8, 8, 0.8);
-      backdrop-filter: blur(20px);
+      height: 52px;
+      background: rgba(8,8,8,0.9);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
+      padding: 0 16px;
       z-index: 1000;
     }
-
     .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       font-weight: 700;
-      font-size: 20px;
+      font-size: 17px;
       color: var(--text-primary);
       text-decoration: none;
-      transition: var(--transition);
     }
-
-    .logo:hover {
-      color: var(--accent);
-    }
-
     .logo-icon {
-      width: 36px;
-      height: 36px;
+      width: 28px;
+      height: 28px;
       background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      border-radius: var(--radius);
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: var(--transition);
     }
-
-    .logo:hover .logo-icon {
-      transform: rotate(-10deg) scale(1.05);
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-
-    /* Navigation */
-    .nav-links {
-      display: none;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .nav-links { display: none; gap: 4px; }
     .nav-link {
-      padding: 10px 16px;
+      padding: 6px 12px;
       color: var(--text-secondary);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
-      border-radius: var(--radius);
+      border-radius: 6px;
       transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
+    .nav-link:hover, .nav-link.active { color: var(--text-primary); background: var(--bg-hover); }
+    .nav-link.active { color: var(--accent); background: var(--accent-light); }
 
-    .nav-link:hover {
-      color: var(--text-primary);
-      background: var(--bg-hover);
-    }
-
-    .nav-link.active {
-      color: var(--accent);
-      background: var(--accent-light);
-    }
-
-    /* Header Actions */
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .header-actions { display: flex; align-items: center; gap: 8px; }
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 20px;
-      font-size: 14px;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
       font-weight: 600;
-      font-family: inherit;
-      border-radius: var(--radius);
+      border-radius: 6px;
       cursor: pointer;
       transition: var(--transition);
       border: none;
       text-decoration: none;
-      white-space: nowrap;
     }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+    .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .btn-sm { padding: 4px 10px; font-size: 11px; }
 
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-    }
-
-    .btn-ghost:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-      border-color: var(--border-light);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      color: white;
-      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
-    }
-
-    .btn-secondary {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-hover);
-      border-color: var(--border-light);
-    }
-
-    .btn-sm {
-      padding: 8px 14px;
-      font-size: 13px;
-    }
-
-    /* Hamburger Menu */
+    /* Small Hamburger */
     .hamburger {
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       cursor: pointer;
-      border-radius: var(--radius);
-      transition: var(--transition);
+      border-radius: 6px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-    }
-
-    .hamburger:hover {
-      background: var(--bg-hover);
-      border-color: var(--border-light);
-    }
-
-    .hamburger span {
-      width: 20px;
-      height: 2px;
-      background: var(--text-primary);
-      border-radius: 2px;
       transition: var(--transition);
-      transform-origin: center;
     }
-
-    .hamburger.active span:nth-child(1) {
-      transform: translateY(7px) rotate(45deg);
-    }
-
-    .hamburger.active span:nth-child(2) {
-      opacity: 0;
-      transform: scaleX(0);
-    }
-
-    .hamburger.active span:nth-child(3) {
-      transform: translateY(-7px) rotate(-45deg);
-    }
+    .hamburger:hover { background: var(--bg-hover); border-color: var(--border-light); }
+    .hamburger span { width: 16px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: var(--transition); }
+    .hamburger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
     /* Mobile Menu */
     .mobile-menu {
       position: fixed;
-      top: 64px;
+      top: 52px;
       left: 0;
       right: 0;
-      background: rgba(17, 17, 17, 0.95);
-      backdrop-filter: blur(20px);
+      background: rgba(17,17,17,0.98);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
-      padding: 16px;
+      padding: 12px;
       transform: translateY(-120%);
       opacity: 0;
       visibility: hidden;
       transition: var(--transition);
       z-index: 999;
     }
-
-    .mobile-menu.active {
-      transform: translateY(0);
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .mobile-menu-items {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .mobile-menu.active { transform: translateY(0); opacity: 1; visibility: visible; }
     .mobile-menu-item {
-      padding: 14px 18px;
-      background: var(--bg-tertiary);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-      transition: var(--transition);
-      border: 1px solid transparent;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      width: 100%;
-      text-align: left;
-    }
-
-    .mobile-menu-item:hover {
-      background: var(--bg-hover);
-      border-color: var(--border-light);
-      transform: translateX(6px);
-    }
-
-    .mobile-menu-item.active {
-      background: var(--accent-light);
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .mobile-menu-item.btn-primary {
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      color: white;
-      border: none;
-      justify-content: center;
-      font-weight: 600;
-    }
-
-    .mobile-menu-item.btn-primary:hover {
-      background: linear-gradient(135deg, var(--accent-hover), #7c3aed);
-      transform: none;
-      border: none;
-    }
-
-    /* Main Content */
-    .main-content {
-      padding: 88px 20px 40px;
-      max-width: 720px;
-      margin: 0 auto;
-    }
-
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 20px 0 40px;
-      animation: fadeInUp 0.6s ease-out;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(24px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: var(--accent-light);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 50px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--accent);
-      margin-bottom: 20px;
-      animation: fadeInUp 0.6s ease-out 0.1s both;
-    }
-
-    .hero-badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background: var(--accent);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .hero h1 {
-      font-size: 42px;
-      font-weight: 800;
-      margin-bottom: 16px;
-      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      font-size: 16px;
-      color: var(--text-secondary);
-      max-width: 480px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    /* Generator Card */
-    .generator-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-top: 32px;
-      box-shadow: var(--shadow);
-      animation: fadeInUp 0.6s ease-out 0.2s both;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .card-icon {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .card-subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .input-group {
-      margin-bottom: 18px;
-    }
-
-    .input-group label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .input-group input,
-    .input-group textarea,
-    .input-group select {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-size: 15px;
-      font-family: inherit;
-      transition: var(--transition);
-    }
-
-    .input-group input::placeholder,
-    .input-group textarea::placeholder {
-      color: var(--text-muted);
-    }
-
-    .input-group input:focus,
-    .input-group textarea:focus,
-    .input-group select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px var(--accent-light);
-    }
-
-    .input-group textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .input-group select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23737373' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      padding-right: 44px;
-    }
-
-    .select-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    /* Code Output */
-    .output-section {
-      margin-top: 24px;
-      display: none;
-      animation: fadeInUp 0.4s ease-out;
-    }
-
-    .output-section.show {
-      display: block;
-    }
-
-    .output-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .output-title {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .output-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .code-output {
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      max-height: 400px;
-      overflow: auto;
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      padding: 10px 14px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      color: var(--text-primary);
+      text-decoration: none;
       font-size: 13px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      word-break: break-word;
+      font-weight: 500;
+      margin-bottom: 6px;
+      border: none;
+      width: 100%;
+      cursor: pointer;
+      transition: var(--transition);
     }
+    .mobile-menu-item:hover { background: var(--bg-hover); transform: translateX(4px); }
+    .mobile-menu-item.active { background: var(--accent-light); color: var(--accent); }
+    .mobile-menu-item.btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; justify-content: center; }
+    .mobile-menu-item.btn-primary:hover { transform: none; }
 
-    .code-output pre {
-      margin: 0;
+    /* Main Content */
+    .main-content { padding: 68px 16px 32px; max-width: 700px; margin: 0 auto; }
+    .page { display: none; animation: fadeIn 0.25s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Hero */
+    .hero { text-align: center; padding: 24px 0; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--accent-light); border: 1px solid rgba(99,102,241,0.25); border-radius: 50px; font-size: 11px; font-weight: 500; color: var(--accent); margin-bottom: 16px; }
+    .hero-badge::before { content: ''; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .hero h1 { font-size: 30px; font-weight: 800; margin-bottom: 10px; background: linear-gradient(135deg, var(--text-primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 14px; color: var(--text-secondary); max-width: 340px; margin: 0 auto; }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-top: 20px;
+      box-shadow: var(--shadow);
     }
+    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .card-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .card-title { font-size: 16px; font-weight: 700; }
+    .card-subtitle { font-size: 12px; color: var(--text-muted); }
 
-    /* Syntax Highlighting */
+    /* Form */
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .input-group input, .input-group textarea, .input-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    .input-group input:focus, .input-group textarea:focus, .input-group select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+    .input-group textarea { min-height: 90px; resize: vertical; }
+    .input-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%737373' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+    .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Output */
+    .output-section { margin-top: 18px; display: none; }
+    .output-section.show { display: block; animation: fadeIn 0.3s ease; }
+    .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .output-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .output-actions { display: flex; gap: 6px; }
+    .code-output { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 6px; padding: 14px; max-height: 300px; overflow: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; white-space: pre-wrap; }
     .code-output .keyword { color: #c792ea; }
     .code-output .string { color: #c3e88d; }
     .code-output .function { color: #82aaff; }
     .code-output .comment { color: #546e7a; }
-    .code-output .number { color: #f78c6c; }
-    .code-output .operator { color: #89ddff; }
 
-    /* Loading Spinner */
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid transparent;
-      border-top-color: currentColor;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+    /* Saved Codes */
+    .saved-section { margin-top: 32px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .section-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .section-count { padding: 3px 10px; background: var(--bg-tertiary); border-radius: 50px; font-size: 11px; color: var(--text-secondary); }
+    .codes-list { display: flex; flex-direction: column; gap: 10px; }
+    .code-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; transition: var(--transition); }
+    .code-item:hover { border-color: var(--border-light); transform: translateY(-2px); }
+    .code-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .code-item-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; display: flex; gap: 10px; }
+    .code-item-preview { font-size: 12px; color: var(--text-secondary); max-height: 50px; overflow: hidden; font-family: monospace; margin-bottom: 10px; }
+    .code-item-actions { display: flex; gap: 6px; }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    /* Chat Page */
+    .chat-container { display: flex; flex-direction: column; height: calc(100vh - 100px); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .chat-header { padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+    .chat-header h2 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+    .chat-header p { font-size: 11px; color: var(--text-muted); }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .chat-message { display: flex; gap: 10px; max-width: 85%; }
+    .chat-message.user { align-self: flex-end; flex-direction: row-reverse; }
+    .chat-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .chat-message.bot .chat-avatar { background: var(--accent); color: white; }
+    .chat-message.user .chat-avatar { background: var(--bg-tertiary); color: var(--text-muted); }
+    .chat-content { background: var(--bg-secondary); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); }
+    .chat-message.user .chat-content { background: var(--accent-light); border-color: var(--accent); }
+    .chat-content p { font-size: 13px; line-height: 1.5; }
+    .chat-input { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-secondary); display: flex; gap: 10px; }
+    .chat-input input { flex: 1; padding: 10px 14px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; }
+    .chat-input input:focus { outline: none; border-color: var(--accent); }
+    .chat-input .btn { padding: 10px 16px; }
 
-    /* Saved Codes Section */
-    .saved-codes-section {
-      margin-top: 48px;
-      animation: fadeInUp 0.6s ease-out 0.3s both;
-    }
+    /* Dashboard */
+    .dashboard-header { margin-bottom: 20px; }
+    .dashboard-header h2 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .dashboard-header p { font-size: 13px; color: var(--text-muted); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 12px; }
+    .stat-icon { width: 38px; height: 38px; background: var(--accent-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--accent); }
+    .stat-value { font-size: 22px; font-weight: 700; }
+    .stat-label { font-size: 11px; color: var(--text-muted); }
 
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
+    /* Docs */
+    .docs-layout { display: grid; grid-template-columns: 220px 1fr; gap: 18px; }
+    .docs-sidebar { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; height: fit-content; position: sticky; top: 68px; }
+    .docs-search { margin-bottom: 14px; }
+    .docs-search input { width: 100%; padding: 8px 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; }
+    .docs-search input:focus { outline: none; border-color: var(--accent); }
+    .docs-nav { display: flex; flex-direction: column; gap: 3px; }
+    .docs-link { padding: 8px 12px; color: var(--text-secondary); text-decoration: none; font-size: 13px; border-radius: 5px; transition: var(--transition); }
+    .docs-link:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .docs-link.active { background: var(--accent-light); color: var(--accent); }
+    .docs-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+    .docs-content h2 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
+    .docs-content h3 { font-size: 15px; font-weight: 600; margin: 18px 0 10px; }
+    .docs-content p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+    .docs-content ol, .docs-content ul { margin-left: 18px; margin-bottom: 14px; }
+    .docs-content li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
 
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
+    /* Auth Pages */
+    .auth-container { max-width: 380px; margin: 60px auto; padding: 24px; }
+    .auth-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; }
+    .auth-header { text-align: center; margin-bottom: 24px; }
+    .auth-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .auth-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .auth-subtitle { font-size: 13px; color: var(--text-secondary); }
+    .auth-tabs { display: flex; gap: 4px; background: var(--bg-tertiary); padding: 4px; border-radius: 6px; margin-bottom: 20px; }
+    .auth-tab { flex: 1; padding: 8px; background: transparent; border: none; border-radius: 5px; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: var(--transition); font-family: inherit; }
+    .auth-tab.active { background: var(--bg-card); color: var(--text-primary); }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; animation: fadeIn 0.3s ease; }
+    .auth-footer { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-secondary); }
+    .auth-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
 
-    .section-count {
-      padding: 4px 12px;
-      background: var(--bg-tertiary);
-      border-radius: 50px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); padding: 16px; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 360px; padding: 24px; transform: scale(0.95); transition: var(--transition); }
+    .modal-overlay.active .modal { transform: scale(1); }
 
-    .codes-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    /* Toast */
+    .toast-container { position: fixed; bottom: 20px; right: 20px; left: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 3000; }
+    .toast { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0; transition: var(--transition); }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--error); }
+    .toast-message { font-size: 13px; flex: 1; }
 
-    .code-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      transition: var(--transition);
-    }
+    /* User */
+    .user-section { display: none; align-items: center; gap: 8px; }
+    .user-section.active { display: flex; }
+    .user-avatar { width: 30px; height: 30px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+    .user-name { font-size: 13px; font-weight: 600; }
 
-    .code-item:hover {
-      border-color: var(--border-light);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow);
-    }
+    /* Empty */
+    .empty-state { text-align: center; padding: 32px 16px; color: var(--text-secondary); }
+    .empty-icon { width: 48px; height: 48px; background: var(--bg-tertiary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+    .empty-text { font-size: 14px; }
+    .empty-sub { font-size: 12px; color: var(--text-muted); }
 
-    .code-item-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .code-item-info h3 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 6px;
-    }
-
-    .code-item-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .code-item-preview {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      max-height: 70px;
-      overflow: hidden;
-      margin-bottom: 16px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .code-item-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* Auth Modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      opacity: 0;
-      visibility: hidden;
-      transition: var(--transition);
-      padding: 20px;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 400px;
-      padding: 32px;
-      transform: scale(0.9) translateY(20px);
-      transition: var(--transition);
-    }
-
-    .modal-overlay.active .modal {
-      transform: scale(1) translateY(0);
-    }
-
-    .modal-header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .modal-icon {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      color: white;
-    }
-
-    .modal-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .modal-subtitle {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .modal-tabs {
-      display: flex;
-      gap: 4px;
-      background: var(--bg-tertiary);
-      padding: 4px;
-      border-radius: var(--radius);
-      margin-bottom: 24px;
-    }
-
-    .modal-tab {
-      flex: 1;
-      padding: 12px;
-      background: transparent;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: var(--transition);
-      font-family: inherit;
-    }
-
-    .modal-tab.active {
-      background: var(--bg-card);
-      color: var(--text-primary);
-    }
-
-    .auth-form {
-      display: none;
-    }
-
-    .auth-form.active {
-      display: block;
-      animation: fadeInUp 0.3s ease-out;
-    }
-
-    .form-footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .form-footer a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    /* Toast Notifications */
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      left: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 3000;
-      pointer-events: none;
-    }
-
-    .toast {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      box-shadow: var(--shadow-lg);
-      transform: translateY(120px);
-      opacity: 0;
-      transition: var(--transition);
-      pointer-events: auto;
-    }
-
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    .toast.success {
-      border-left: 3px solid var(--success);
-    }
-
-    .toast.success .toast-icon {
-      color: var(--success);
-    }
-
-    .toast.error {
-      border-left: 3px solid var(--error);
-    }
-
-    .toast.error .toast-icon {
-      color: var(--error);
-    }
-
-    .toast-message {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
-      flex: 1;
-    }
-
-    /* User Section */
-    .user-section {
-      display: none;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-section.active {
-      display: flex;
-    }
-
-    .user-avatar {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 700;
-      color: white;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--text-secondary);
-    }
-
-    .empty-state-icon {
-      width: 64px;
-      height: 64px;
-      background: var(--bg-tertiary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      color: var(--text-muted);
-    }
-
-    .empty-state-text {
-      font-size: 15px;
-      margin-bottom: 8px;
-    }
-
-    .empty-state-subtext {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
+    /* Spinner */
+    .spinner { width: 14px; height: 14px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Responsive */
     @media (min-width: 768px) {
-      .header {
-        padding: 0 32px;
-      }
-
-      .nav-links {
-        display: flex;
-      }
-
-      .main-content {
-        padding: 100px 32px 48px;
-      }
-
-      .hero h1 {
-        font-size: 56px;
-      }
-
-      .hero p {
-        font-size: 18px;
-      }
-
-      .hamburger {
-        display: none;
-      }
-
-      .mobile-menu {
-        display: none;
-      }
-
-      .generator-card {
-        padding: 32px;
-      }
-
-      .toast-container {
-        left: auto;
-        width: 380px;
-      }
-    }
-
-    .page {
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Chat Page */
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 120px);
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-    }
-
-    .chat-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-secondary);
-    }
-
-    .chat-header h2 {
-      font-size: 20px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 4px;
-    }
-
-    .chat-header p {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .chat-message {
-      display: flex;
-      gap: 12px;
-      max-width: 85%;
-    }
-
-    .chat-message.user {
-      align-self: flex-end;
-      flex-direction: row-reverse;
-    }
-
-    .chat-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .chat-message.bot .chat-avatar {
-      background: var(--accent);
-      color: white;
-    }
-
-    .chat-message.user .chat-avatar {
-      background: var(--bg-tertiary);
-      color: var(--text-secondary);
-    }
-
-    .chat-content {
-      background: var(--bg-secondary);
-      padding: 14px 18px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-    }
-
-    .chat-message.user .chat-content {
-      background: var(--accent-light);
-      border-color: var(--accent);
-    }
-
-    .chat-content p {
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .chat-input {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      background: var(--bg-secondary);
-      display: flex;
-      gap: 12px;
-    }
-
-    .chat-input input {
-      flex: 1;
-      padding: 14px 18px;
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .chat-input input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .chat-input .btn {
-      padding: 14px 20px;
-    }
-
-    /* Dashboard Page */
-    .dashboard-header {
-      margin-bottom: 28px;
-    }
-
-    .dashboard-header h2 {
-      font-size: 24px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 6px;
-    }
-
-    .dashboard-header p {
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      transition: var(--transition);
-    }
-
-    .stat-card:hover {
-      border-color: var(--border-light);
-      transform: translateY(-2px);
-    }
-
-    .stat-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--accent-light);
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent);
-    }
-
-    .stat-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .recent-activity-section h3 {
-      font-size: 18px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .activity-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .activity-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .activity-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--bg-tertiary);
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-    }
-
-    .activity-info {
-      flex: 1;
-    }
-
-    .activity-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .activity-time {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    /* Docs Page */
-    .docs-layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 24px;
-      min-height: calc(100vh - 140px);
-    }
-
-    .docs-sidebar {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      height: fit-content;
-      position: sticky;
-      top: 88px;
-    }
-
-    .docs-search {
-      margin-bottom: 20px;
-    }
-
-    .docs-search input {
-      width: 100%;
-      padding: 12px 14px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-size: 14px;
-    }
-
-    .docs-search input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .docs-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .docs-link {
-      padding: 12px 16px;
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      border-radius: var(--radius);
-      transition: var(--transition);
-    }
-
-    .docs-link:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .docs-link.active {
-      background: var(--accent-light);
-      color: var(--accent);
-    }
-
-    .docs-content {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-    }
-
-    .docs-content h2 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .docs-content h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 24px 0 12px;
-    }
-
-    .docs-content p {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      margin-bottom: 16px;
-    }
-
-    .docs-content ol, .docs-content ul {
-      margin-left: 20px;
-      margin-bottom: 16px;
-    }
-
-    .docs-content li {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      line-height: 1.6;
-    }
-
-    /* About Page */
-    .about-container {
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .about-container h2 {
-      font-size: 28px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .about-content h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 28px 0 14px;
-    }
-
-    .about-content p {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-
-    .features-list {
-      list-style: none;
-      margin-left: 0;
-    }
-
-    .features-list li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 10px;
-    }
-
-    .features-list li i {
-      color: var(--accent);
-      width: 20px;
-      height: 20px;
-    }
-
-    .tech-stack {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .tech-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      background: var(--bg-tertiary);
-      border-radius: var(--radius);
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    /* Page content padding */
-    .page-content {
-      padding: 88px 24px 40px;
+      .header { padding: 0 24px; }
+      .nav-links { display: flex; }
+      .hamburger { display: none; }
+      .mobile-menu { display: none; }
+      .main-content { padding: 80px 24px 40px; }
+      .hero h1 { font-size: 38px; }
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+      .toast-container { left: auto; width: 320px; }
     }
     @media (max-width: 767px) {
-      .hero h1 {
-        font-size: 32px;
-      }
-
-      .select-row {
-        grid-template-columns: 1fr;
-      }
-
-      .page-content {
-        padding: 80px 16px 24px;
-      }
-
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .chat-container {
-        height: calc(100vh - 160px);
-      }
-
-      .docs-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .docs-sidebar {
-        position: fixed;
-        left: -100%;
-        top: 64px;
-        width: 280px;
-        height: calc(100vh - 64px);
-        z-index: 100;
-        transition: left 0.3s ease;
-      }
-
-      .docs-sidebar.active {
-        left: 0;
-      }
+      .nav-links { display: none; }
+      .select-row { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .docs-layout { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- Background -->
-    <div class="bg-pattern">
-      <div class="grid-overlay"></div>
-    </div>
+    <div class="bg-pattern"></div>
 
     <!-- Header -->
     <header class="header">
       <a href="#" class="logo" onclick="showPage('home')">
-        <div class="logo-icon">
-          <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
-        </div>
+        <div class="logo-icon"><i data-lucide="zap" style="width: 16px; height: 16px;"></i></div>
         <span>AI Coder</span>
       </a>
 
       <nav class="nav-links">
-        <a href="#" class="nav-link" onclick="showPage('home')" data-page="home">
-          <i data-lucide="sparkles"></i>
-          Generate
-        </a>
-        <a href="#" class="nav-link" onclick="showPage('chat')" data-page="chat">
-          <i data-lucide="message-square"></i>
-          Chat
-        </a>
-        <a href="#" class="nav-link" onclick="showPage('dashboard')" data-page="dashboard">
-          <i data-lucide="layout-dashboard"></i>
-          Dashboard
-        </a>
-        <a href="#" class="nav-link" onclick="showPage('docs')" data-page="docs">
-          <i data-lucide="book-open"></i>
-          Docs
-        </a>
-        <a href="#" class="nav-link" onclick="showPage('about')" data-page="about">
-          <i data-lucide="info"></i>
-          About
-        </a>
+        <a href="#" class="nav-link active" onclick="showPage('home')" data-page="home"><i data-lucide="sparkles" style="width:14px;height:14px;margin-right:4px;"></i>Generate</a>
+        <a href="#" class="nav-link" onclick="showPage('chat')" data-page="chat"><i data-lucide="message-square" style="width:14px;height:14px;margin-right:4px;"></i>Chat</a>
+        <a href="#" class="nav-link" onclick="showPage('dashboard')" data-page="dashboard"><i data-lucide="layout-dashboard" style="width:14px;height:14px;margin-right:4px;"></i>Dashboard</a>
+        <a href="#" class="nav-link" onclick="showPage('docs')" data-page="docs"><i data-lucide="book-open" style="width:14px;height:14px;margin-right:4px;"></i>Docs</a>
+        <a href="#" class="nav-link" onclick="showPage('login')" data-page="login"><i data-lucide="log-in" style="width:14px;height:14px;margin-right:4px;"></i>Login</a>
       </nav>
 
       <div class="header-actions">
@@ -1463,243 +384,165 @@
           <div class="user-avatar" id="userAvatar">U</div>
           <span class="user-name" id="userName">User</span>
         </div>
-        <button class="btn btn-primary btn-sm" id="loginBtn" onclick="openAuthModal()">
-          <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
-          Login
+        <button class="btn btn-primary btn-sm" id="loginBtn" onclick="showPage('login')">
+          <i data-lucide="log-in" style="width:12px;height:12px;"></i>Login
         </button>
       </div>
       <button class="hamburger" id="hamburger" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
     </header>
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
-      <div class="mobile-menu-items">
-        <a href="#" class="mobile-menu-item" onclick="showPage('home'); toggleMenu()">
-          <i data-lucide="sparkles"></i>
-          Generate Code
-        </a>
-        <a href="#" class="mobile-menu-item" onclick="showPage('chat'); toggleMenu()">
-          <i data-lucide="message-square"></i>
-          Chat
-        </a>
-        <a href="#" class="mobile-menu-item" onclick="showPage('dashboard'); toggleMenu()">
-          <i data-lucide="layout-dashboard"></i>
-          Dashboard
-        </a>
-        <a href="#" class="mobile-menu-item" onclick="showPage('docs'); toggleMenu()">
-          <i data-lucide="book-open"></i>
-          Docs
-        </a>
-        <a href="#" class="mobile-menu-item" onclick="showPage('about'); toggleMenu()">
-          <i data-lucide="info"></i>
-          About
-        </a>
-        <button class="mobile-menu-item btn-primary" id="mobileLoginBtn" onclick="handleMobileLogin()">
-          <i data-lucide="log-in"></i>
-          Login
-        </button>
-      </div>
+      <a href="#" class="mobile-menu-item active" onclick="showPage('home');toggleMenu()"><i data-lucide="sparkles"></i>Generate Code</a>
+      <a href="#" class="mobile-menu-item" onclick="showPage('chat');toggleMenu()"><i data-lucide="message-square"></i>AI Chat</a>
+      <a href="#" class="mobile-menu-item" onclick="showPage('dashboard');toggleMenu()"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+      <a href="#" class="mobile-menu-item" onclick="showPage('docs');toggleMenu()"><i data-lucide="book-open"></i>Docs & Search</a>
+      <a href="#" class="mobile-menu-item" onclick="showPage('login');toggleMenu()"><i data-lucide="log-in"></i>Login / Register</a>
     </div>
 
     <!-- Main Content -->
-    <main class="main-content" id="mainContent">
-      <!-- Home Page (Code Generator) -->
-      <div id="page-home" class="page">
-        <!-- Hero -->
+    <main class="main-content">
+      <!-- Home Page -->
+      <div id="page-home" class="page active">
         <section class="hero">
           <div class="hero-badge">AI-Powered Code Generation</div>
           <h1>Smart Code Generator</h1>
-          <p>Describe what you want to build and let AI write production-ready code instantly. Save, manage, and access your generated code from anywhere.</p>
+          <p>Describe what you want to build and let AI write production-ready code instantly.</p>
         </section>
 
-      <!-- Generator Card -->
-      <section class="generator-card" id="generate">
-        <div class="card-header">
-          <div class="card-icon">
-            <i data-lucide="code" style="width: 22px; height: 22px;"></i>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon"><i data-lucide="code" style="width:18px;height:18px;"></i></div>
+            <div>
+              <div class="card-title">Code Generator</div>
+              <div class="card-subtitle">Powered by advanced AI</div>
+            </div>
           </div>
-          <div>
-            <div class="card-title">Code Generator</div>
-            <div class="card-subtitle">Powered by advanced AI</div>
-          </div>
-        </div>
-
-        <form id="codeGeneratorForm">
-          <div class="input-group">
-            <label>
-              <i data-lucide="message-square"></i>
-              What do you want to build?
-            </label>
-            <textarea id="prompt" placeholder="e.g., A responsive login form with email validation and forgot password functionality..." required></textarea>
-          </div>
-
-          <div class="select-row">
+          <form id="codeGeneratorForm">
             <div class="input-group">
-              <label>
-                <i data-lucide="languages"></i>
-                Language
-              </label>
-              <select id="language">
-                <option value="javascript">JavaScript</option>
-                <option value="typescript">TypeScript</option>
-                <option value="python">Python</option>
-                <option value="html">HTML/CSS</option>
-                <option value="react">React</option>
-                <option value="vue">Vue.js</option>
-                <option value="go">Go</option>
-                <option value="rust">Rust</option>
-              </select>
+              <label>What do you want to build?</label>
+              <textarea id="prompt" placeholder="e.g., A responsive login form with email validation..." required></textarea>
             </div>
-
-            <div class="input-group">
-              <label>
-                <i data-lucide="box"></i>
-                Framework
-              </label>
-              <select id="framework">
-                <option value="">None</option>
-                <option value="vanilla">Vanilla</option>
-                <option value="express">Express.js</option>
-                <option value="nextjs">Next.js</option>
-                <option value="fastapi">FastAPI</option>
-                <option value="flask">Flask</option>
-                <option value="django">Django</option>
-              </select>
+            <div class="select-row">
+              <div class="input-group">
+                <label>Language</label>
+                <select id="language">
+                  <option value="javascript">JavaScript</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="python">Python</option>
+                  <option value="html">HTML/CSS</option>
+                  <option value="react">React</option>
+                  <option value="go">Go</option>
+                  <option value="rust">Rust</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label>Framework</label>
+                <select id="framework">
+                  <option value="">None</option>
+                  <option value="express">Express.js</option>
+                  <option value="nextjs">Next.js</option>
+                  <option value="fastapi">FastAPI</option>
+                  <option value="flask">Flask</option>
+                </select>
+              </div>
             </div>
-          </div>
-
-          <button type="submit" class="btn btn-primary" id="generateBtn" style="width: 100%; margin-top: 8px;">
-            <i data-lucide="sparkles" style="width: 18px; height: 18px;"></i>
-            Generate Code
-          </button>
-        </form>
-
-        <!-- Output Section -->
-        <div class="output-section" id="outputSection">
-          <div class="output-header">
-            <div class="output-title">
-              <i data-lucide="check-circle" style="color: var(--success);"></i>
-              Generated Code
+            <button type="submit" class="btn btn-primary" id="generateBtn" style="width:100%;margin-top:4px;">
+              <i data-lucide="sparkles" style="width:14px;height:14px;"></i>Generate Code
+            </button>
+          </form>
+          <div class="output-section" id="outputSection">
+            <div class="output-header">
+              <span class="output-title"><i data-lucide="check-circle" style="width:14px;height:14px;color:var(--success);margin-right:6px;"></i>Generated Code</span>
+              <div class="output-actions">
+                <button class="btn btn-ghost btn-sm" onclick="handleCopy()"><i data-lucide="copy" style="width:12px;height:12px;"></i>Copy</button>
+                <button class="btn btn-primary btn-sm" onclick="handleSave()"><i data-lucide="save" style="width:12px;height:12px;"></i>Save</button>
+              </div>
             </div>
-            <div class="output-actions">
-              <button class="btn btn-secondary btn-sm" id="copyBtn">
-                <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
-                Copy
-              </button>
-              <button class="btn btn-primary btn-sm" id="saveBtn">
-                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
-                Save
-              </button>
-            </div>
-          </div>
-          <div class="code-output" id="codeOutput"></div>
-        </div>
-      </section>
-
-      <!-- Saved Codes -->
-      <section class="saved-codes-section" id="saved">
-        <div class="section-header">
-          <div class="section-title">
-            <i data-lucide="folder-code"></i>
-            Your Saved Codes
-          </div>
-          <span class="section-count" id="codesCount">0</span>
-        </div>
-        <div class="codes-list" id="codesList">
-          <div class="empty-state">
-            <div class="empty-state-icon">
-              <i data-lucide="file-code"></i>
-            </div>
-            <p class="empty-state-text">No saved codes yet</p>
-            <p class="empty-state-subtext">Generate and save your first code!</p>
+            <div class="code-output" id="codeOutput"></div>
           </div>
         </div>
-      </section>
-      </div> <!-- End page-home -->
+
+        <div class="saved-section">
+          <div class="section-header">
+            <div class="section-title"><i data-lucide="folder-code" style="width:18px;height:18px;color:var(--accent);"></i>Your Saved Codes</div>
+            <span class="section-count" id="codesCount">0</span>
+          </div>
+          <div class="codes-list" id="codesList">
+            <div class="empty-state">
+              <div class="empty-icon"><i data-lucide="file-code" style="width:20px;height:20px;"></i></div>
+              <div class="empty-text">No saved codes yet</div>
+              <div class="empty-sub">Generate and save your first code!</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Chat Page -->
-      <div id="page-chat" class="page" style="display: none;">
+      <div id="page-chat" class="page">
         <div class="chat-container">
           <div class="chat-header">
             <h2><i data-lucide="message-square"></i> AI Code Chat</h2>
-            <p>Ask questions about code and get instant answers</p>
+            <p>Ask questions or generate code using natural language</p>
           </div>
           <div class="chat-messages" id="chatMessages">
             <div class="chat-message bot">
-              <div class="chat-avatar"><i data-lucide="bot"></i></div>
-              <div class="chat-content">
-                <p>Hello! I'm your AI coding assistant. Ask me anything about code, programming, or ask me to generate code for you!</p>
-              </div>
+              <div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div>
+              <div class="chat-content"><p>Hello! I'm your AI coding assistant. Ask me to write code, explain concepts, or help with debugging!</p></div>
             </div>
           </div>
           <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Ask me about code..." />
-            <button class="btn btn-primary" onclick="sendChatMessage()">
-              <i data-lucide="send"></i>
-            </button>
+            <input type="text" id="chatInput" placeholder="Ask me to write code..." />
+            <button class="btn btn-primary" onclick="sendChatMessage()"><i data-lucide="send" style="width:14px;height:14px;"></i></button>
           </div>
         </div>
       </div>
 
       <!-- Dashboard Page -->
-      <div id="page-dashboard" class="page" style="display: none;">
+      <div id="page-dashboard" class="page">
         <div class="dashboard-header">
           <h2><i data-lucide="layout-dashboard"></i> Dashboard</h2>
           <p>Your code generation statistics</p>
         </div>
-        <div class="dashboard-grid">
+        <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="code"></i></div>
-            <div class="stat-info">
-              <div class="stat-value" id="totalCodes">0</div>
-              <div class="stat-label">Total Codes</div>
-            </div>
+            <div class="stat-icon"><i data-lucide="code" style="width:18px;height:18px;"></i></div>
+            <div><div class="stat-value" id="totalCodes">0</div><div class="stat-label">Total Codes</div></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="calendar"></i></div>
-            <div class="stat-info">
-              <div class="stat-value" id="thisMonth">0</div>
-              <div class="stat-label">This Month</div>
-            </div>
+            <div class="stat-icon"><i data-lucide="calendar" style="width:18px;height:18px;"></i></div>
+            <div><div class="stat-value" id="thisMonth">0</div><div class="stat-label">This Month</div></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="clock"></i></div>
-            <div class="stat-info">
-              <div class="stat-value" id="recentActivity">0</div>
-              <div class="stat-label">Recent Activity</div>
-            </div>
+            <div class="stat-icon"><i data-lucide="clock" style="width:18px;height:18px;"></i></div>
+            <div><div class="stat-value" id="recentActivity">0</div><div class="stat-label">This Week</div></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="star"></i></div>
-            <div class="stat-info">
-              <div class="stat-value" id="favoriteLang">-</div>
-              <div class="stat-label">Top Language</div>
-            </div>
+            <div class="stat-icon"><i data-lucide="star" style="width:18px;height:18px;"></i></div>
+            <div><div class="stat-value" id="favoriteLang">-</div><div class="stat-label">Top Language</div></div>
           </div>
         </div>
-        <div class="recent-activity-section">
-          <h3><i data-lucide="history"></i> Recent Activity</h3>
-          <div class="activity-list" id="activityList">
+        <div class="saved-section">
+          <div class="section-header">
+            <div class="section-title"><i data-lucide="history"></i> Recent Activity</div>
+          </div>
+          <div class="codes-list" id="activityList">
             <div class="empty-state">
-              <div class="empty-state-icon"><i data-lucide="activity"></i></div>
-              <p class="empty-state-text">No recent activity</p>
-              <p class="empty-state-subtext">Generate some code to see your activity here</p>
+              <div class="empty-icon"><i data-lucide="activity" style="width:20px;height:20px;"></i></div>
+              <div class="empty-text">No recent activity</div>
+              <div class="empty-sub">Generate some code to see activity</div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Docs Page -->
-      <div id="page-docs" class="page" style="display: none;">
+      <div id="page-docs" class="page">
         <div class="docs-layout">
           <aside class="docs-sidebar">
-            <div class="docs-search">
-              <input type="text" id="docsSearch" placeholder="Search docs..." oninput="searchDocs()" />
-            </div>
+            <div class="docs-search"><input type="text" id="docsSearch" placeholder="Search docs..." oninput="searchDocs()" /></div>
             <nav class="docs-nav">
               <a href="#" onclick="showDoc('getting-started')" class="docs-link active">Getting Started</a>
               <a href="#" onclick="showDoc('authentication')" class="docs-link">Authentication</a>
@@ -1707,12 +550,13 @@
               <a href="#" onclick="showDoc('code-generation')" class="docs-link">Code Generation</a>
               <a href="#" onclick="showDoc('examples')" class="docs-link">Examples</a>
               <a href="#" onclick="showDoc('faq')" class="docs-link">FAQ</a>
+              <a href="#" onclick="showDoc('search')" class="docs-link">🔍 Code Search</a>
             </nav>
           </aside>
           <div class="docs-content">
             <div id="doc-content">
               <h2>Getting Started</h2>
-              <p>Welcome to AI Coder! This documentation will help you get started with our platform.</p>
+              <p>Welcome to AI Coder! This documentation will help you get started.</p>
               <h3>Quick Start</h3>
               <ol>
                 <li>Create an account or login</li>
@@ -1722,369 +566,424 @@
               </ol>
               <h3>Features</h3>
               <ul>
-                <li><strong>AI Code Generation</strong> - Describe what you want and get code instantly</li>
-                <li><strong>Multiple Languages</strong> - Support for JavaScript, Python, TypeScript, and more</li>
-                <li><strong>Save & Manage</strong> - Save your generated code for later</li>
-                <li><strong>Chat Interface</strong> - Ask questions and get coding help</li>
+                <li><strong>AI Code Generation</strong> - Describe what you want and get code</li>
+                <li><strong>Chat Interface</strong> - Ask coding questions</li>
+                <li><strong>Save & Manage</strong> - Save your generated code</li>
+                <li><strong>Documentation</strong> - Full docs with search</li>
               </ul>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- About Page -->
-      <div id="page-about" class="page" style="display: none;">
-        <div class="about-container">
-          <h2><i data-lucide="info"></i> About AI Coder</h2>
-          <div class="about-content">
-            <p>AI Coder is a smart code generator that helps developers create production-ready code instantly using artificial intelligence.</p>
-            
-            <h3>Features</h3>
-            <ul class="features-list">
-              <li><i data-lucide="sparkles"></i> <strong>AI-Powered Generation</strong> - Describe what you want to build</li>
-              <li><i data-lucide="message-square"></i> <strong>Chat Interface</strong> - Ask coding questions</li>
-              <li><i data-lucide="layout-dashboard"></i> <strong>Dashboard</strong> - Track your usage</li>
-              <li><i data-lucide="book-open"></i> <strong>Documentation</strong> - Full documentation</li>
-            </ul>
-
-            <h3>Tech Stack</h3>
-            <div class="tech-stack">
-              <span class="tech-badge"><i data-lucide="cloud"></i> Cloudflare Workers</span>
-              <span class="tech-badge"><i data-lucide="database"></i> Neon DB</span>
-              <span class="tech-badge"><i data-lucide="cpu"></i> OpenAI</span>
-              <span class="tech-badge"><i data-lucide="code"></i> Vanilla JS</span>
+      <!-- Login Page -->
+      <div id="page-login" class="page">
+        <div class="auth-container">
+          <div class="auth-card">
+            <div class="auth-header">
+              <div class="auth-icon"><i data-lucide="user" style="width:24px;height:24px;"></i></div>
+              <h2 class="auth-title">Welcome</h2>
+              <p class="auth-subtitle">Sign in to save your generated code</p>
             </div>
+            <div class="auth-tabs">
+              <button class="auth-tab active" data-tab="login">Sign In</button>
+              <button class="auth-tab" data-tab="register">Create Account</button>
+            </div>
+            <form class="auth-form active" id="loginForm">
+              <div class="input-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" required></div>
+              <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" required></div>
+              <button type="submit" class="btn btn-primary" style="width:100%;"><i data-lucide="log-in" style="width:14px;height:14px;"></i>Sign In</button>
+            </form>
+            <form class="auth-form" id="registerForm">
+              <div class="input-group"><label>Full Name</label><input type="text" id="registerName" placeholder="John Doe" required></div>
+              <div class="input-group"><label>Email</label><input type="email" id="registerEmail" placeholder="you@example.com" required></div>
+              <div class="input-group"><label>Password</label><input type="password" id="registerPassword" placeholder="••••••••" required></div>
+              <button type="submit" class="btn btn-primary" style="width:100%;"><i data-lucide="user-plus" style="width:14px;height:14px;"></i>Create Account</button>
+            </form>
+            <div class="auth-footer">
+              <a href="#" onclick="showPage('reset')">Forgot Password?</a>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <h3>Version</h3>
-            <p>Current Version: 1.0.0</p>
+      <!-- Reset Password Page -->
+      <div id="page-reset" class="page">
+        <div class="auth-container">
+          <div class="auth-card">
+            <div class="auth-header">
+              <div class="auth-icon"><i data-lucide="key-round" style="width:24px;height:24px;"></i></div>
+              <h2 class="auth-title">Reset Password</h2>
+              <p class="auth-subtitle">Enter your email to reset password</p>
+            </div>
+            <form id="resetForm">
+              <div class="input-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@example.com" required></div>
+              <button type="submit" class="btn btn-primary" style="width:100%;"><i data-lucide="mail" style="width:14px;height:14px;"></i>Send Reset Link</button>
+            </form>
+            <div class="auth-footer">
+              <a href="#" onclick="showPage('login')">Back to Login</a>
+            </div>
           </div>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Auth Modal -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-icon">
-          <i data-lucide="user" style="width: 28px; height: 28px;"></i>
-        </div>
-        <h2 class="modal-title">Welcome Back</h2>
-        <p class="modal-subtitle">Sign in to save your generated code</p>
-      </div>
-
-      <div class="modal-tabs">
-        <button class="modal-tab active" data-tab="login">Sign In</button>
-        <button class="modal-tab" data-tab="register">Create Account</button>
-      </div>
-
-      <!-- Login Form -->
-      <form class="auth-form active" id="loginForm">
-        <div class="input-group">
-          <label>Email Address</label>
-          <input type="email" id="loginEmail" placeholder="you@example.com" required>
-        </div>
-        <div class="input-group">
-          <label>Password</label>
-          <input type="password" id="loginPassword" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
-          <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
-          Sign In
-        </button>
-      </form>
-
-      <!-- Register Form -->
-      <form class="auth-form" id="registerForm">
-        <div class="input-group">
-          <label>Full Name</label>
-          <input type="text" id="registerName" placeholder="John Doe" required>
-        </div>
-        <div class="input-group">
-          <label>Email Address</label>
-          <input type="email" id="registerEmail" placeholder="you@example.com" required>
-        </div>
-        <div class="input-group">
-          <label>Password</label>
-          <input type="password" id="registerPassword" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
-          <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
-          Create Account
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Toast Container -->
+  <!-- Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
-    // Global menu toggle function
+    // Initialize Lucide
+    lucide.createIcons();
+
+    // State
+    let currentCode = '', currentPrompt = '', currentLanguage = 'javascript', currentFramework = '';
+    let currentUser = null;
+
+    // Menu Toggle
     function toggleMenu() {
-      const hamburger = document.getElementById('hamburger');
-      const mobileMenu = document.getElementById('mobileMenu');
-      if (hamburger) hamburger.classList.toggle('active');
-      if (mobileMenu) mobileMenu.classList.toggle('active');
-    }
-    
-    // Open auth modal function
-    function openAuthModal() {
-      const authModal = document.getElementById('authModal');
-      if (authModal) {
-        authModal.classList.add('active');
-        lucide.createIcons();
-      }
-    }
-    
-    // Handle mobile login
-    function handleMobileLogin() {
-      // Close menu first
-      const mobileMenu = document.getElementById('mobileMenu');
-      const hamburger = document.getElementById('hamburger');
-      if (mobileMenu) mobileMenu.classList.remove('active');
-      if (hamburger) hamburger.classList.remove('active');
-      
-      // Open auth modal after closing menu
-      setTimeout(function() {
-        openAuthModal();
-      }, 100);
-    }
-    
-    // Scroll to section function
-    function scrollToSection(sectionId) {
-      // Close menu first
-      const mobileMenu = document.getElementById('mobileMenu');
-      const hamburger = document.getElementById('hamburger');
-      if (mobileMenu) mobileMenu.classList.remove('active');
-      if (hamburger) hamburger.classList.remove('active');
-      
-      // Scroll to section
-      setTimeout(function() {
-        const section = document.getElementById(sectionId);
-        if (section) {
-          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
+      document.getElementById('hamburger').classList.toggle('active');
+      document.getElementById('mobileMenu').classList.toggle('active');
     }
 
-    // Show page function
+    // Show Page
     function showPage(pageName) {
       event.preventDefault();
-      
-      // Hide all pages
-      var pages = document.querySelectorAll('.page');
-      pages.forEach(function(page) {
-        page.style.display = 'none';
-      });
-      
-      // Show selected page
-      var selectedPage = document.getElementById('page-' + pageName);
-      if (selectedPage) {
-        selectedPage.style.display = 'block';
-      }
-      
-      // Update nav links
-      var navLinks = document.querySelectorAll('.nav-link');
-      navLinks.forEach(function(link) {
-        link.classList.remove('active');
-        if (link.getAttribute('data-page') === pageName) {
-          link.classList.add('active');
-        }
-      });
-      
-      // Close mobile menu
-      var mobileMenu = document.getElementById('mobileMenu');
-      var hamburger = document.getElementById('hamburger');
-      if (mobileMenu) mobileMenu.classList.remove('active');
-      if (hamburger) hamburger.classList.remove('active');
-      
-      // Scroll to top
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + pageName).classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      var navLink = document.querySelector('.nav-link[data-page="' + pageName + '"]');
+      if (navLink) navLink.classList.add('active');
+      document.getElementById('hamburger').classList.remove('active');
+      document.getElementById('mobileMenu').classList.remove('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Reinitialize Lucide icons
       lucide.createIcons();
-      
-      // Load page-specific data
-      if (pageName === 'dashboard') {
-        loadDashboardData();
-      }
+      if (pageName === 'dashboard') loadDashboardData();
     }
 
-    // Chat functions
+    // Auth Tabs
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+        document.getElementById(this.dataset.tab + 'Form').classList.add('active');
+      });
+    });
+
+    // Check Auth
+    function checkAuth() {
+      var token = localStorage.getItem('authToken');
+      var user = localStorage.getItem('user');
+      if (token && user) {
+        try {
+          currentUser = JSON.parse(user);
+          document.getElementById('userSection').classList.add('active');
+          document.getElementById('loginBtn').style.display = 'none';
+          document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+          document.getElementById('userName').textContent = currentUser.name;
+          loadSavedCodes();
+        } catch (e) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
+        }
+      }
+    }
+    checkAuth();
+
+    // Toast
+    function showToast(message, type) {
+      var container = document.getElementById('toastContainer');
+      var toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+      toast.innerHTML = '<i data-lucide="' + (type === 'success' ? 'check-circle' : 'x-circle') + '" style="width:16px;height:16px;"></i><span class="toast-message">' + message + '</span>';
+      container.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(function() { toast.classList.add('show'); }, 10);
+      setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 200); }, 3000);
+    }
+
+    // Code Generation
+    document.getElementById('codeGeneratorForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var prompt = document.getElementById('prompt').value.trim();
+      var language = document.getElementById('language').value;
+      var framework = document.getElementById('framework').value;
+      if (!prompt) { showToast('Please enter a description', 'error'); return; }
+      
+      currentPrompt = prompt;
+      currentLanguage = language;
+      currentFramework = framework;
+      
+      var btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Generating...';
+      
+      try {
+        var response = await fetch('/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, language, framework })
+        });
+        var data = await response.json();
+        if (response.ok) {
+          currentCode = data.code;
+          document.getElementById('codeOutput').innerHTML = '<pre>' + highlightSyntax(data.code) + '</pre>';
+          document.getElementById('outputSection').classList.add('show');
+          showToast('Code generated successfully!', 'success');
+        } else {
+          showToast(data.error || 'Failed to generate', 'error');
+        }
+      } catch (err) {
+        showToast('Connection error', 'error');
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="sparkles" style="width:14px;height:14px;"></i>Generate Code';
+      lucide.createIcons();
+    });
+
+    // Syntax Highlight
+    function highlightSyntax(code) {
+      var escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      escaped = escaped.replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>');
+      escaped = escaped.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="string">$1</span>');
+      escaped = escaped.replace(/\b(function|const|let|var|if|else|for|while|return|import|export|class|async|await)\b/g, '<span class="keyword">$1</span>');
+      escaped = escaped.replace(/\b(\w+)(?=\s*\()/g, '<span class="function">$1</span>');
+      return escaped;
+    }
+
+    // Copy
+    function handleCopy() {
+      if (!currentCode) { showToast('No code to copy', 'error'); return; }
+      navigator.clipboard.writeText(currentCode).then(function() { showToast('Copied!', 'success'); }).catch(function() { showToast('Copy failed', 'error'); });
+    }
+
+    // Save
+    function handleSave() {
+      if (!currentCode) { showToast('No code to save', 'error'); return; }
+      if (!localStorage.getItem('authToken')) { showToast('Please login first', 'error'); showPage('login'); return; }
+      
+      var title = currentPrompt.slice(0, 40) + (currentPrompt.length > 40 ? '...' : '');
+      fetch('/save-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
+        body: JSON.stringify({ title, code: currentCode, language: currentLanguage, framework: currentFramework, prompt: currentPrompt })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.success) { showToast('Saved!', 'success'); loadSavedCodes(); }
+        else { showToast(data.error || 'Failed', 'error'); }
+      }).catch(function() { showToast('Error', 'error'); });
+    }
+
+    // Load Saved Codes
+    function loadSavedCodes() {
+      if (!localStorage.getItem('authToken')) return;
+      fetch('/get-codes', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.codes) {
+            document.getElementById('codesCount').textContent = data.codes.length;
+            if (data.codes.length === 0) {
+              document.getElementById('codesList').innerHTML = '<div class="empty-state"><div class="empty-icon"><i data-lucide="file-code" style="width:20px;height:20px;"></i></div><div class="empty-text">No saved codes</div></div>';
+            } else {
+              document.getElementById('codesList').innerHTML = data.codes.slice(0,5).map(function(c) {
+                return '<div class="code-item"><h4>' + c.title + '</h4><div class="code-item-meta"><span><i data-lucide="code" style="width:12px;height:12px;"></i>' + c.language + '</span><span><i data-lucide="calendar" style="width:12px;height:12px;"></i>' + new Date(c.created_at).toLocaleDateString() + '</span></div><div class="code-item-preview">' + c.code.slice(0,100) + '...</div><div class="code-item-actions"><button class="btn btn-ghost btn-sm" onclick="viewCode(' + c.id + ')"><i data-lucide="eye" style="width:12px;height:12px;"></i>View</button><button class="btn btn-ghost btn-sm" onclick="copyCode(' + c.id + ')"><i data-lucide="copy" style="width:12px;height:12px;"></i>Copy</button></div></div>';
+              }).join('');
+            }
+            lucide.createIcons();
+          }
+        });
+    }
+
+    // View Code
+    window.viewCode = function(id) {
+      fetch('/get-code/' + id, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.code) {
+            currentCode = data.code;
+            document.getElementById('codeOutput').innerHTML = '<pre>' + highlightSyntax(data.code) + '</pre>';
+            document.getElementById('outputSection').classList.add('show');
+            showPage('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+    };
+
+    // Copy Saved Code
+    window.copyCode = function(id) {
+      fetch('/get-code/' + id, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.code) {
+            navigator.clipboard.writeText(data.code).then(function() { showToast('Copied!', 'success'); });
+          }
+        });
+    };
+
+    // Dashboard
+    function loadDashboardData() {
+      if (!localStorage.getItem('authToken')) return;
+      fetch('/get-codes', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.codes) {
+            var codes = data.codes;
+            document.getElementById('totalCodes').textContent = codes.length;
+            var now = new Date();
+            var thisMonth = codes.filter(function(c) { var d = new Date(c.created_at); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).length;
+            document.getElementById('thisMonth').textContent = thisMonth;
+            var weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+            var recent = codes.filter(function(c) { return new Date(c.created_at) > weekAgo; }).length;
+            document.getElementById('recentActivity').textContent = recent;
+            if (codes.length > 0) {
+              var langs = {};
+              codes.forEach(function(c) { langs[c.language] = (langs[c.language] || 0) + 1; });
+              var topLang = Object.keys(langs).reduce(function(a,b) { return langs[a] > langs[b] ? a : b; });
+              document.getElementById('favoriteLang').textContent = topLang;
+            }
+          }
+          lucide.createIcons();
+        });
+    }
+
+    // Chat
     function sendChatMessage() {
-      var chatInput = document.getElementById('chatInput');
-      var message = chatInput.value.trim();
+      var input = document.getElementById('chatInput');
+      var message = input.value.trim();
       if (!message) return;
       
-      // Add user message
-      var chatMessages = document.getElementById('chatMessages');
-      var userMsg = document.createElement('div');
-      userMsg.className = 'chat-message user';
-      userMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="user"></i></div><div class="chat-content"><p>' + escapeHtml(message) + '</p></div>';
-      chatMessages.appendChild(userMsg);
-      
-      // Clear input
-      chatInput.value = '';
-      
-      // Show loading
-      var loadingMsg = document.createElement('div');
-      loadingMsg.className = 'chat-message bot';
-      loadingMsg.id = 'loadingMessage';
-      loadingMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="bot"></i></div><div class="chat-content"><p><span class="spinner"></span> Thinking...</p></div>';
-      chatMessages.appendChild(loadingMsg);
+      var messages = document.getElementById('chatMessages');
+      messages.innerHTML += '<div class="chat-message user"><div class="chat-avatar"><i data-lucide="user" style="width:14px;height:14px;"></i></div><div class="chat-content"><p>' + message + '</p></div></div>';
+      messages.innerHTML += '<div class="chat-message bot" id="loading"><div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div><div class="chat-content"><p><span class="spinner"></span> Thinking...</p></div></div>';
+      input.value = '';
       lucide.createIcons();
-      
-      // Scroll to bottom
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      
-      // Send to API
+      messages.scrollTop = messages.scrollHeight;
+
       fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: message })
-      })
-      .then(function(response) { return response.json(); })
-      .then(function(data) {
-        var loading = document.getElementById('loadingMessage');
-        if (loading) loading.remove();
-        
-        var botMsg = document.createElement('div');
-        botMsg.className = 'chat-message bot';
-        botMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="bot"></i></div><div class="chat-content"><p>' + escapeHtml(data.response || 'Sorry, I could not process your request.') + '</p></div>';
-        chatMessages.appendChild(botMsg);
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        document.getElementById('loading').remove();
+        messages.innerHTML += '<div class="chat-message bot"><div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div><div class="chat-content"><p>' + (data.response || data.code || 'Sorry, I could not process that.') + '</p></div></div>';
+        if (data.code) {
+          currentCode = data.code;
+          currentPrompt = message;
+          showToast('Code generated! Go to Generate to view.', 'success');
+        }
         lucide.createIcons();
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      })
-      .catch(function(error) {
-        var loading = document.getElementById('loadingMessage');
-        if (loading) loading.remove();
-        
-        var botMsg = document.createElement('div');
-        botMsg.className = 'chat-message bot';
-        botMsg.innerHTML = '<div class="chat-avatar"><i data-lucide="bot"></i></div><div class="chat-content"><p>Sorry, there was an error. Please try again.</p></div>';
-        chatMessages.appendChild(botMsg);
+        messages.scrollTop = messages.scrollHeight;
+      }).catch(function() {
+        document.getElementById('loading').remove();
+        messages.innerHTML += '<div class="chat-message bot"><div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div><div class="chat-content"><p>Sorry, there was an error.</p></div></div>';
         lucide.createIcons();
-        chatMessages.scrollTop = chatMessages.scrollHeight;
       });
     }
 
-    // Chat input enter key
-    document.addEventListener('DOMContentLoaded', function() {
-      var chatInput = document.getElementById('chatInput');
-      if (chatInput) {
-        chatInput.addEventListener('keypress', function(e) {
-          if (e.key === 'Enter') {
-            sendChatMessage();
-          }
-        });
-      }
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') sendChatMessage();
     });
 
-    // Dashboard functions
-    function loadDashboardData() {
-      if (!window.Auth || !window.Auth.isAuthenticated()) {
-        return;
-      }
-      
-      fetch('/get-codes', {
-        method: 'GET',
-        headers: { 'Authorization': 'Bearer ' + window.Auth.getToken() }
-      })
-      .then(function(response) { return response.json(); })
-      .then(function(data) {
-        if (data.codes) {
-          var totalCodes = document.getElementById('totalCodes');
-          var thisMonth = document.getElementById('thisMonth');
-          var recentActivity = document.getElementById('recentActivity');
-          var favoriteLang = document.getElementById('favoriteLang');
-          
-          if (totalCodes) totalCodes.textContent = data.codes.length;
-          
-          // This month
-          var now = new Date();
-          var thisMonthCount = data.codes.filter(function(c) {
-            var d = new Date(c.created_at);
-            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-          }).length;
-          if (thisMonth) thisMonth.textContent = thisMonthCount;
-          
-          // Recent (last 7 days)
-          var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          var recentCount = data.codes.filter(function(c) {
-            return new Date(c.created_at) > weekAgo;
-          }).length;
-          if (recentActivity) recentActivity.textContent = recentCount;
-          
-          // Top language
-          if (data.codes.length > 0) {
-            var langs = {};
-            data.codes.forEach(function(c) {
-              langs[c.language] = (langs[c.language] || 0) + 1;
-            });
-            var topLang = Object.keys(langs).reduce(function(a, b) {
-              return langs[a] > langs[b] ? a : b;
-            });
-            if (favoriteLang) favoriteLang.textContent = topLang || '-';
-          }
-        }
-      })
-      .catch(function(error) {
-        console.error('Error loading dashboard:', error);
-      });
-    }
+    // Docs - JSON Search Data
+    var docsData = {
+      'getting-started': '<h2>Getting Started</h2><p>Welcome to AI Coder! This documentation will help you get started.</p><h3>Quick Start</h3><ol><li>Create an account or login</li><li>Enter a description</li><li>Select language</li><li>Click Generate</li></ol><h3>Features</h3><ul><li>AI Code Generation</li><li>Chat Interface</li><li>Save & Manage</li></ul>',
+      'authentication': '<h2>Authentication</h2><p>Learn how to authenticate.</p><h3>Login</h3><p>POST /auth/login with email and password.</p><h3>Register</h3><p>POST /auth/register with name, email, password.</p><h3>Reset Password</h3><p>Request password reset via email.</p>',
+      'api-reference': '<h2>API Reference</h2><h3>Code Generation</h3><p>POST /generate - Generate code</p><p>POST /save-code - Save code (auth)</p><p>GET /get-codes - Get all codes (auth)</p><p>DELETE /delete-code/:id - Delete code</p>',
+      'code-generation': '<h2>Code Generation</h2><h3>Supported Languages</h3><ul><li>JavaScript</li><li>TypeScript</li><li>Python</li><li>HTML/CSS</li><li>React</li><li>Go</li><li>Rust</li></ul><h3>Frameworks</h3><ul><li>Express.js</li><li>Next.js</li><li>FastAPI</li><li>Flask</li></ul>',
+      'examples': '<h2>Examples</h2><h3>Login Form</h3><p>Input: "Create a responsive login form"</p><h3>API Endpoint</h3><p>Input: "Create REST API for user CRUD"</p><h3>React Component</h3><p>Input: "Create a React button component"</p>',
+      'faq': '<h2>FAQ</h2><h3>Is it free?</h3><p>Yes, basic usage is free.</p><h3>What languages?</h3><p>JavaScript, TypeScript, Python, HTML, CSS, React, Go, Rust.</p><h3>How to save?</h3><p>Login and click Save after generating.</p>',
+      'search': '<h2>🔍 Code Search</h2><p>Search through documentation and code examples.</p><h3>Popular Searches</h3><ul><li><strong>JavaScript</strong> - Functions, arrays, objects</li><li><strong>Python</strong> - Classes, lists, dictionaries</li><li><strong>React</strong> - Components, hooks, state</li><li><strong>API</strong> - REST, endpoints, CRUD</li><li><strong>Auth</strong> - JWT, login, register</li><li><strong>Database</strong> - SQL, queries, migrations</li></ul><h3>Quick Examples</h3><pre class="code-output">// JavaScript function
+function greet(name) {
+  return `Hello, ${name}!`;
+}
 
-    // Docs functions
+// Python class
+class User:
+    def __init__(self, name):
+        self.name = name
+        
+// React hook
+const useState = (initial) => {
+  const state = initial;
+  // ...
+};</pre>'
+    };
+
     function showDoc(docId) {
       event.preventDefault();
-      
-      var docs = {
-        'getting-started': '<h2>Getting Started</h2><p>Welcome to AI Coder! This documentation will help you get started.</p><h3>Quick Start</h3><ol><li>Create an account or login</li><li>Enter a description of what you want to build</li><li>Select your preferred programming language</li><li>Click Generate and get your code!</li></ol>',
-        'authentication': '<h2>Authentication</h2><p>Learn how to authenticate with the AI Coder API.</p><h3>Login</h3><p>Send a POST request to /auth/login with email and password.</p><h3>Register</h3><p>Send a POST request to /auth/register with name, email, and password.</p>',
-        'api-reference': '<h2>API Reference</h2><p>Complete API documentation.</p><h3>Code Generation</h3><p>POST /generate - Generate code from prompt</p><h3>Save Code</h3><p>POST /save-code - Save generated code (requires auth)</p>',
-        'code-generation': '<h2>Code Generation</h2><p>Learn how to generate code using AI.</p><h3>Supported Languages</h3><ul><li>JavaScript</li><li>TypeScript</li><li>Python</li><li>HTML/CSS</li><li>React</li><li>And more...</li></ul>',
-        'examples': '<h2>Examples</h2><p>Code examples and use cases.</p><h3>Example 1: Simple Function</h3><p>Input: "Create a function to calculate factorial"</p><h3>Example 2: API Endpoint</h3><p>Input: "Create a REST API endpoint for user login"</p>',
-        'faq': '<h2>FAQ</h2><h3>Is it free?</h3><p>Yes, basic usage is free with limited code generation.</p><h3>What languages are supported?</h3><p>JavaScript, TypeScript, Python, HTML, CSS, React, and more.</p>'
-      };
-      
-      var docContent = document.getElementById('doc-content');
-      if (docContent && docs[docId]) {
-        docContent.innerHTML = docs[docId];
-      }
-      
-      // Update active link
-      var links = document.querySelectorAll('.docs-link');
-      links.forEach(function(link) {
-        link.classList.remove('active');
-      });
+      document.getElementById('doc-content').innerHTML = docsData[docId] || docsData['getting-started'];
+      document.querySelectorAll('.docs-link').forEach(function(l) { l.classList.remove('active'); });
       event.target.classList.add('active');
     }
 
     function searchDocs() {
       var query = document.getElementById('docsSearch').value.toLowerCase();
-      var links = document.querySelectorAll('.docs-link');
-      links.forEach(function(link) {
-        var text = link.textContent.toLowerCase();
-        if (text.includes(query) || query === '') {
-          link.style.display = 'block';
-        } else {
-          link.style.display = 'none';
-        }
+      document.querySelectorAll('.docs-link').forEach(function(link) {
+        link.style.display = (link.textContent.toLowerCase().includes(query) || query === '') ? 'block' : 'none';
       });
     }
 
-    // Escape HTML
-    function escapeHtml(text) {
-      var div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-    
-    // Initialize Lucide icons
-    lucide.createIcons();
+    // Login Form
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var email = document.getElementById('loginEmail').value;
+      var password = document.getElementById('loginPassword').value;
+      fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          currentUser = data.user;
+          document.getElementById('userSection').classList.add('active');
+          document.getElementById('loginBtn').style.display = 'none';
+          document.getElementById('userAvatar').textContent = data.user.name.charAt(0).toUpperCase();
+          document.getElementById('userName').textContent = data.user.name;
+          showToast('Welcome back!', 'success');
+          showPage('home');
+          loadSavedCodes();
+        } else {
+          showToast(data.error || 'Login failed', 'error');
+        }
+      }).catch(function() { showToast('Error', 'error'); });
+    });
+
+    // Register Form
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = document.getElementById('registerName').value;
+      var email = document.getElementById('registerEmail').value;
+      var password = document.getElementById('registerPassword').value;
+      fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, password: password })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          currentUser = data.user;
+          document.getElementById('userSection').classList.add('active');
+          document.getElementById('loginBtn').style.display = 'none';
+          document.getElementById('userAvatar').textContent = data.user.name.charAt(0).toUpperCase();
+          document.getElementById('userName').textContent = data.user.name;
+          showToast('Account created!', 'success');
+          showPage('home');
+          loadSavedCodes();
+        } else {
+          showToast(data.error || 'Registration failed', 'error');
+        }
+      }).catch(function() { showToast('Error', 'error'); });
+    });
+
+    // Reset Form
+    document.getElementById('resetForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      showToast('Reset link sent to your email!', 'success');
+      showPage('login');
+    });
   </script>
-  <script src="/public/js/auth.js"></script>
-  <script src="/public/js/app.js"></script>
 </body>
 </html>
