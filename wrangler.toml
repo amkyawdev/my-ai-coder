@@ -1,0 +1,12 @@
+name = "my-ai-coder"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+node_compat = true
+
+[vars]
+ENVIRONMENT = "production"
+
+# Environment variables for local development (.dev.vars)
+# DATABASE_URL=postgresql://...
+# JWT_SECRET=...
+# OPENAI_API_KEY=...
