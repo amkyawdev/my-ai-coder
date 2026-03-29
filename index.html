@@ -1004,12 +1004,12 @@
           <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
           Login
         </button>
-        <button class="hamburger" id="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
       </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </header>
 
     <!-- Mobile Menu -->
@@ -1207,6 +1207,27 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
+    // Global menu toggle function
+    function toggleMenu() {
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (hamburger) hamburger.classList.toggle('active');
+      if (mobileMenu) mobileMenu.classList.toggle('active');
+    }
+    
+    // Close menu when clicking on a menu item
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuItems = document.querySelectorAll('.mobile-menu-item');
+      menuItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+          const mobileMenu = document.getElementById('mobileMenu');
+          const hamburger = document.getElementById('hamburger');
+          if (mobileMenu) mobileMenu.classList.remove('active');
+          if (hamburger) hamburger.classList.remove('active');
+        });
+      });
+    });
+    
     // Initialize Lucide icons
     lucide.createIcons();
   </script>
