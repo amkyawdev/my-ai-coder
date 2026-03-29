@@ -981,15 +981,15 @@
       </a>
 
       <nav class="nav-links">
-        <a href="#generate" class="nav-link active">
+        <a href="#generate" class="nav-link active" onclick="scrollToSection('generate')">
           <i data-lucide="sparkles"></i>
           Generate
         </a>
-        <a href="#saved" class="nav-link">
+        <a href="#saved" class="nav-link" onclick="scrollToSection('saved')">
           <i data-lucide="folder-code"></i>
           Saved
         </a>
-        <a href="#about" class="nav-link">
+        <a href="#about" class="nav-link" onclick="scrollToSection('about')">
           <i data-lucide="info"></i>
           About
         </a>
@@ -1015,15 +1015,15 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
       <div class="mobile-menu-items">
-        <a href="#generate" class="mobile-menu-item active">
+        <a href="#generate" class="mobile-menu-item" onclick="scrollToSection('generate')">
           <i data-lucide="sparkles"></i>
           Generate Code
         </a>
-        <a href="#saved" class="mobile-menu-item">
+        <a href="#saved" class="mobile-menu-item" onclick="scrollToSection('saved')">
           <i data-lucide="folder-code"></i>
           Saved Codes
         </a>
-        <a href="#about" class="mobile-menu-item">
+        <a href="#about" class="mobile-menu-item" onclick="scrollToSection('about')">
           <i data-lucide="info"></i>
           About
         </a>
@@ -1146,6 +1146,29 @@
           </div>
         </div>
       </section>
+
+      <!-- About Section -->
+      <section class="about-section" id="about" style="margin-top: 48px; padding-bottom: 40px;">
+        <div class="section-header">
+          <div class="section-title">
+            <i data-lucide="info"></i>
+            About AI Coder
+          </div>
+        </div>
+        <div class="about-card" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
+          <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.7;">
+            AI Coder is a smart code generator that helps developers create production-ready code instantly using artificial intelligence. Simply describe what you want to build, and our AI will generate the code for you.
+          </p>
+          <p style="color: var(--text-secondary); line-height: 1.7;">
+            Built with modern web technologies including Cloudflare Workers, Neon PostgreSQL, and OpenAI for intelligent code generation.
+          </p>
+          <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <span style="padding: 6px 12px; background: var(--bg-tertiary); border-radius: var(--radius); font-size: 13px; color: var(--text-secondary);">Cloudflare Workers</span>
+            <span style="padding: 6px 12px; background: var(--bg-tertiary); border-radius: var(--radius); font-size: 13px; color: var(--text-secondary);">Neon DB</span>
+            <span style="padding: 6px 12px; background: var(--bg-tertiary); border-radius: var(--radius); font-size: 13px; color: var(--text-secondary);">OpenAI</span>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -1215,18 +1238,22 @@
       if (mobileMenu) mobileMenu.classList.toggle('active');
     }
     
-    // Close menu when clicking on a menu item
-    document.addEventListener('DOMContentLoaded', function() {
-      const menuItems = document.querySelectorAll('.mobile-menu-item');
-      menuItems.forEach(function(item) {
-        item.addEventListener('click', function() {
-          const mobileMenu = document.getElementById('mobileMenu');
-          const hamburger = document.getElementById('hamburger');
-          if (mobileMenu) mobileMenu.classList.remove('active');
-          if (hamburger) hamburger.classList.remove('active');
-        });
-      });
-    });
+    // Scroll to section function
+    function scrollToSection(sectionId) {
+      // Close menu first
+      const mobileMenu = document.getElementById('mobileMenu');
+      const hamburger = document.getElementById('hamburger');
+      if (mobileMenu) mobileMenu.classList.remove('active');
+      if (hamburger) hamburger.classList.remove('active');
+      
+      // Scroll to section
+      setTimeout(function() {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
     
     // Initialize Lucide icons
     lucide.createIcons();
