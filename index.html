@@ -345,6 +345,20 @@
       border-color: var(--accent);
     }
 
+    .mobile-menu-item.btn-primary {
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      color: white;
+      border: none;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .mobile-menu-item.btn-primary:hover {
+      background: linear-gradient(135deg, var(--accent-hover), #7c3aed);
+      transform: none;
+      border: none;
+    }
+
     /* Main Content */
     .main-content {
       padding: 88px 20px 40px;
@@ -1000,7 +1014,7 @@
           <div class="user-avatar" id="userAvatar">U</div>
           <span class="user-name" id="userName">User</span>
         </div>
-        <button class="btn btn-ghost btn-sm" id="loginBtn">
+        <button class="btn btn-primary btn-sm" id="loginBtn" onclick="openAuthModal()">
           <i data-lucide="log-in" style="width: 16px; height: 16px;"></i>
           Login
         </button>
@@ -1027,7 +1041,7 @@
           <i data-lucide="info"></i>
           About
         </a>
-        <button class="mobile-menu-item" id="mobileLoginBtn">
+        <button class="mobile-menu-item btn-primary" id="mobileLoginBtn" onclick="handleMobileLogin()">
           <i data-lucide="log-in"></i>
           Login
         </button>
@@ -1236,6 +1250,29 @@
       const mobileMenu = document.getElementById('mobileMenu');
       if (hamburger) hamburger.classList.toggle('active');
       if (mobileMenu) mobileMenu.classList.toggle('active');
+    }
+    
+    // Open auth modal function
+    function openAuthModal() {
+      const authModal = document.getElementById('authModal');
+      if (authModal) {
+        authModal.classList.add('active');
+        lucide.createIcons();
+      }
+    }
+    
+    // Handle mobile login
+    function handleMobileLogin() {
+      // Close menu first
+      const mobileMenu = document.getElementById('mobileMenu');
+      const hamburger = document.getElementById('hamburger');
+      if (mobileMenu) mobileMenu.classList.remove('active');
+      if (hamburger) hamburger.classList.remove('active');
+      
+      // Open auth modal after closing menu
+      setTimeout(function() {
+        openAuthModal();
+      }, 100);
     }
     
     // Scroll to section function
