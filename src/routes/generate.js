@@ -1,21 +1,22 @@
-import { callOpenHands } from './src/services/openhands.js';
+/**
+ * generate.js — Code generation route
+ * Bug fix: corrected import path (was './src/services/openhands.js', should be '../services/openhands.js')
+ */
+import { callOpenHands } from '../services/openhands.js';
 
 export async function generateCode(request, env) {
   try {
     const body = await request.json();
     const { prompt, language, framework } = body;
 
-    if (!prompt) {
+    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
       return new Response(JSON.stringify({ error: 'Prompt is required' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // Build the prompt for code generation
-    const fullPrompt = buildCodePrompt(prompt, language, framework);
-
-    // Call OpenHands AI to generate code
+    const fullPrompt = buildCodePrompt(prompt.trim(), language || 'javascript', framework || '');
     const code = await callOpenHands(fullPrompt, env);
 
     return new Response(JSON.stringify({ code }), {
@@ -31,13 +32,13 @@ export async function generateCode(request, env) {
 }
 
 function buildCodePrompt(prompt, language, framework) {
-  let fullPrompt = `Generate ${language} code for: ${prompt}. `;
-  
-  if (framework && framework !== 'vanilla') {
-    fullPrompt += `Use ${framework} framework. `;
+  let fullPrompt = `Write ${language} code that: ${prompt}. `;
+
+  if (framework && framework !== '') {
+    fullPrompt += `Use the ${framework} framework. `;
   }
-  
-  fullPrompt += `Return only the code without any explanation or markdown formatting.`;
-  
+
+  fullPrompt += `Return ONLY the code with no explanation, no markdown code fences, and no extra commentary. The code should be clean, well-commented, and production-ready.`;
+
   return fullPrompt;
 }
