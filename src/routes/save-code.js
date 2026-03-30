@@ -1,3 +1,8 @@
+/**
+ * save-code.js — Saved codes CRUD routes
+ * Bug fix: updated DB queries to use Neon tagged-template syntax (db`...`)
+ * instead of db.execute({sql, args}) which is a libsql/Turso pattern, not Neon.
+ */
 import { getDatabase } from '../services/database.js';
 
 export async function saveCode(request, env) {
@@ -14,16 +19,14 @@ export async function saveCode(request, env) {
     }
 
     const db = getDatabase(env);
-    const result = await db.execute({
-      sql: `INSERT INTO saved_codes (user_id, title, code, language, framework, prompt) 
-            VALUES (?, ?, ?, ?, ?, ?)`,
-      args: [userId, title, code, language || 'javascript', framework || '', prompt || ''],
-    });
+    const result = await db`
+      INSERT INTO saved_codes (user_id, title, code, language, framework, prompt)
+      VALUES (${userId}, ${title}, ${code}, ${language || 'javascript'}, ${framework || ''}, ${prompt || ''})
+      RETURNING id
+    `;
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      id: result.lastInsertId 
-    }), {
+    return new Response(JSON.stringify({ success: true, id: result[0]?.id }), {
+      status: 201,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
@@ -40,15 +43,14 @@ export async function getCodes(request, env) {
     const userId = request.userId;
     const db = getDatabase(env);
 
-    const codes = await db.execute({
-      sql: `SELECT id, title, code, language, framework, prompt, created_at 
-            FROM saved_codes 
-            WHERE user_id = ? 
-            ORDER BY created_at DESC`,
-      args: [userId],
-    });
+    const codes = await db`
+      SELECT id, title, code, language, framework, prompt, created_at
+      FROM saved_codes
+      WHERE user_id = ${userId}
+      ORDER BY created_at DESC
+    `;
 
-    return new Response(JSON.stringify({ codes: codes.rows }), {
+    return new Response(JSON.stringify({ codes: codes || [] }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
@@ -65,21 +67,21 @@ export async function getCode(request, env, id) {
     const userId = request.userId;
     const db = getDatabase(env);
 
-    const codes = await db.execute({
-      sql: `SELECT id, title, code, language, framework, prompt, created_at 
-            FROM saved_codes 
-            WHERE id = ? AND user_id = ?`,
-      args: [id, userId],
-    });
+    const codes = await db`
+      SELECT id, title, code, language, framework, prompt, created_at
+      FROM saved_codes
+      WHERE id = ${id} AND user_id = ${userId}
+      LIMIT 1
+    `;
 
-    if (codes.rows.length === 0) {
+    if (!codes || codes.length === 0) {
       return new Response(JSON.stringify({ error: 'Code not found' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    return new Response(JSON.stringify(codes.rows[0]), {
+    return new Response(JSON.stringify(codes[0]), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
@@ -96,13 +98,14 @@ export async function deleteCode(request, env, id) {
     const userId = request.userId;
     const db = getDatabase(env);
 
-    const result = await db.execute({
-      sql: `DELETE FROM saved_codes WHERE id = ? AND user_id = ?`,
-      args: [id, userId],
-    });
+    const result = await db`
+      DELETE FROM saved_codes
+      WHERE id = ${id} AND user_id = ${userId}
+      RETURNING id
+    `;
 
-    if (result.rowsAffected === 0) {
-      return new Response(JSON.stringify({ error: 'Code not found' }), {
+    if (!result || result.length === 0) {
+      return new Response(JSON.stringify({ error: 'Code not found or already deleted' }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
       });

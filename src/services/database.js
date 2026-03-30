@@ -1,22 +1,22 @@
-// Database Service - Neon PostgreSQL
-// Uses @neondatabase/serverless for Cloudflare Workers
+/**
+ * database.js — Neon PostgreSQL service
+ * Bug fix: replaced require() with ES module dynamic import (Workers compatible)
+ */
+import { neon } from '@neondatabase/serverless';
 
 let sql = null;
 
 export function getDatabase(env) {
   if (sql) return sql;
 
-  // Create database connection from environment
-  const connectionString = env.DATABASE_URL || env.NEON_DATABASE_URL;
-  
+  const connectionString =
+    (env && (env.DATABASE_URL || env.NEON_DATABASE_URL)) || null;
+
   if (!connectionString) {
-    throw new Error('DATABASE_URL not configured');
+    throw new Error('DATABASE_URL environment variable is not configured.');
   }
 
-  // Using @neondatabase/serverless for Cloudflare Workers
-  const { neon } = require('@neondatabase/serverless');
   sql = neon(connectionString);
-
   return sql;
 }
 

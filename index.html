@@ -1,989 +1,2368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Coder - Smart Code Generator Platform</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Coder — Smart Code Generator</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="/public/lucide.min.js"></script>
   <style>
+    /* ═══════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════ */
     :root {
-      --bg-primary: #080808;
-      --bg-secondary: #111111;
-      --bg-tertiary: #1a1a1a;
-      --bg-card: #141414;
-      --bg-hover: #1c1c1c;
-      --text-primary: #fafafa;
-      --text-secondary: #a1a1a1;
-      --text-muted: #525252;
-      --accent: #6366f1;
-      --accent-hover: #818cf8;
-      --accent-light: rgba(99, 102, 241, 0.15);
-      --border: #262626;
-      --border-light: #333333;
-      --success: #10b981;
-      --error: #f43f5e;
-      --radius-sm: 5px;
-      --radius: 8px;
-      --radius-lg: 14px;
-      --transition: all 0.2s ease;
-      --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+      --bg-base:       #050508;
+      --bg-surface:    #0d0d14;
+      --bg-elevated:   #13131e;
+      --bg-card:       #16162a;
+      --bg-hover:      #1c1c2e;
+      --bg-input:      #0f0f1a;
+
+      --border:        rgba(255,255,255,0.07);
+      --border-focus:  rgba(130,100,255,0.5);
+      --border-hover:  rgba(255,255,255,0.12);
+
+      --text-primary:  #f0f0ff;
+      --text-secondary:#9898b8;
+      --text-muted:    #50506a;
+
+      --purple:        #8264ff;
+      --purple-dim:    rgba(130,100,255,0.12);
+      --purple-glow:   rgba(130,100,255,0.25);
+      --cyan:          #00d4ff;
+      --cyan-dim:      rgba(0,212,255,0.1);
+      --pink:          #ff4d9b;
+      --green:         #00e5a0;
+      --green-dim:     rgba(0,229,160,0.12);
+      --orange:        #ff8c42;
+
+      --gradient:      linear-gradient(135deg, #8264ff 0%, #00d4ff 100%);
+      --gradient-btn:  linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+
+      --radius-xs: 4px;
+      --radius-sm: 8px;
+      --radius:    12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+
+      --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+      --shadow:     0 4px 20px rgba(0,0,0,0.5);
+      --shadow-lg:  0 8px 40px rgba(0,0,0,0.6);
+      --glow:       0 0 30px rgba(130,100,255,0.2);
+
+      --transition: all 0.18s cubic-bezier(.4,0,.2,1);
+      --transition-slow: all 0.35s cubic-bezier(.4,0,.2,1);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ═══════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg-primary);
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-base);
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.6;
     }
-    .bg-pattern {
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; }
+    input, textarea, select { font-family: inherit; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+    /* Selection */
+    ::selection { background: var(--purple-dim); color: var(--text-primary); }
+
+    /* ═══════════════════════════════════════════
+       BACKGROUND EFFECTS
+    ═══════════════════════════════════════════ */
+    .bg-effects {
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      background: radial-gradient(ellipse at 20% 20%, rgba(99,102,241,0.06) 0%, transparent 50%),
-                  radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.04) 0%, transparent 50%);
+      overflow: hidden;
     }
-    .app-container { position: relative; z-index: 1; }
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+    }
+    .bg-orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #6d28d9 0%, transparent 70%);
+      top: -150px; left: -100px;
+    }
+    .bg-orb-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #0891b2 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+    }
+    .bg-orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+      top: 40%; left: 50%;
+      opacity: 0.15;
+    }
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
 
-    /* Header - Small */
+    /* ═══════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════ */
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ═══════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════ */
     .header {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 52px;
-      background: rgba(8,8,8,0.9);
-      backdrop-filter: blur(16px);
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      background: rgba(5,5,8,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 20px;
       z-index: 1000;
+      gap: 16px;
     }
+
     .logo {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-weight: 700;
-      font-size: 17px;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
       color: var(--text-primary);
-      text-decoration: none;
+      flex-shrink: 0;
     }
-    .logo-icon {
-      width: 28px;
-      height: 28px;
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      border-radius: 6px;
+    .logo-mark {
+      width: 34px; height: 34px;
+      background: var(--gradient);
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 20px rgba(130,100,255,0.4);
     }
-    .nav-links { display: none; gap: 4px; }
-    .nav-link {
-      padding: 6px 12px;
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 13px;
+    .logo-text span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .nav {
+      display: none;
+      align-items: center;
+      gap: 2px;
+    }
+    @media (min-width: 768px) {
+      .nav { display: flex; }
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 13.5px;
       font-weight: 500;
-      border-radius: 6px;
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    .nav-item:hover { color: var(--text-primary); background: var(--bg-hover); }
+    .nav-item.active { color: var(--purple); background: var(--purple-dim); }
+    .nav-item svg { width: 15px; height: 15px; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* User pill */
+    .user-pill {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px 5px 5px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      cursor: pointer;
       transition: var(--transition);
     }
-    .nav-link:hover, .nav-link.active { color: var(--text-primary); background: var(--bg-hover); }
-    .nav-link.active { color: var(--accent); background: var(--accent-light); }
+    .user-pill:hover { border-color: var(--border-hover); }
+    .user-pill.visible { display: flex; }
+    .user-avatar {
+      width: 28px; height: 28px;
+      background: var(--gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+    }
+    .user-name-text { font-size: 13px; font-weight: 600; }
 
-    .header-actions { display: flex; align-items: center; gap: 8px; }
+    /* Hamburger */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 38px; height: 38px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    @media (min-width: 768px) { .hamburger { display: none; } }
+    .hamburger:hover { border-color: var(--border-hover); background: var(--bg-hover); }
+    .hamburger span {
+      width: 18px; height: 1.5px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: var(--transition);
+      transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile menu */
+    .mobile-nav {
+      position: fixed;
+      top: 60px; left: 0; right: 0;
+      background: rgba(13,13,20,0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transform: translateY(-110%);
+      opacity: 0;
+      transition: var(--transition-slow);
+      z-index: 999;
+    }
+    .mobile-nav.open { transform: translateY(0); opacity: 1; }
+    .mobile-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 100%;
+      text-align: left;
+    }
+    .mobile-nav-item:hover { background: var(--bg-hover); border-color: var(--border-hover); }
+    .mobile-nav-item.active { background: var(--purple-dim); border-color: var(--border-focus); color: var(--purple); }
+    .mobile-nav-item svg { width: 18px; height: 18px; }
+
+    /* ═══════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════ */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 6px 14px;
+      gap: 7px;
+      padding: 9px 18px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+    }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--gradient-btn);
+      color: white;
+      box-shadow: 0 0 20px rgba(124,58,237,0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 25px rgba(124,58,237,0.45);
+    }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--bg-hover); color: var(--text-secondary); }
+
+    .btn-danger {
+      background: rgba(239,68,68,0.12);
+      color: #f87171;
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.35); }
+
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+    .btn-sm svg { width: 13px; height: 13px; }
+    .btn-full { width: 100%; }
+
+    .btn-icon {
+      padding: 8px;
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .btn-icon:hover { color: var(--text-primary); border-color: var(--border-hover); }
+    .btn-icon svg { width: 16px; height: 16px; }
+
+    /* ═══════════════════════════════════════════
+       MAIN CONTENT
+    ═══════════════════════════════════════════ */
+    .main {
+      padding: 80px 16px 40px;
+      max-width: 780px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    @media (min-width: 768px) {
+      .main { padding: 90px 24px 60px; }
+    }
+
+    /* Pages */
+    .page { display: none; animation: pageIn 0.25s ease; }
+    .page.active { display: block; }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════
+       HERO SECTION
+    ═══════════════════════════════════════════ */
+    .hero {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(130,100,255,0.25);
+      border-radius: 50px;
       font-size: 12px;
       font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: var(--transition);
-      border: none;
-      text-decoration: none;
+      color: var(--purple);
+      margin-bottom: 20px;
+      letter-spacing: 0.3px;
     }
-    .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
-    .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
-    .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
-    .btn-sm { padding: 4px 10px; font-size: 11px; }
-
-    /* Small Hamburger */
-    .hamburger {
-      width: 32px;
-      height: 32px;
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: livePulse 2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero h1 {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
+    }
+    @media (min-width: 768px) { .hero h1 { font-size: 48px; } }
+    .hero h1 .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 400px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .hero-stats {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      border-radius: 6px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      transition: var(--transition);
+      gap: 24px;
+      margin-top: 24px;
+      flex-wrap: wrap;
     }
-    .hamburger:hover { background: var(--bg-hover); border-color: var(--border-light); }
-    .hamburger span { width: 16px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: var(--transition); }
-    .hamburger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-    .hamburger.active span:nth-child(2) { opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-    /* Mobile Menu */
-    .mobile-menu {
-      position: fixed;
-      top: 52px;
-      left: 0;
-      right: 0;
-      background: rgba(17,17,17,0.98);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      padding: 12px;
-      transform: translateY(-120%);
-      opacity: 0;
-      visibility: hidden;
-      transition: var(--transition);
-      z-index: 999;
-    }
-    .mobile-menu.active { transform: translateY(0); opacity: 1; visibility: visible; }
-    .mobile-menu-item {
+    .hero-stat {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      background: var(--bg-tertiary);
-      border-radius: 6px;
-      color: var(--text-primary);
-      text-decoration: none;
+      gap: 6px;
       font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 6px;
-      border: none;
-      width: 100%;
-      cursor: pointer;
-      transition: var(--transition);
+      color: var(--text-muted);
     }
-    .mobile-menu-item:hover { background: var(--bg-hover); transform: translateX(4px); }
-    .mobile-menu-item.active { background: var(--accent-light); color: var(--accent); }
-    .mobile-menu-item.btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; justify-content: center; }
-    .mobile-menu-item.btn-primary:hover { transform: none; }
+    .hero-stat svg { width: 14px; height: 14px; color: var(--purple); }
+    .hero-stat strong { color: var(--text-primary); }
 
-    /* Main Content */
-    .main-content { padding: 68px 16px 32px; max-width: 700px; margin: 0 auto; }
-    .page { display: none; animation: fadeIn 0.25s ease; }
-    .page.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Hero */
-    .hero { text-align: center; padding: 24px 0; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--accent-light); border: 1px solid rgba(99,102,241,0.25); border-radius: 50px; font-size: 11px; font-weight: 500; color: var(--accent); margin-bottom: 16px; }
-    .hero-badge::before { content: ''; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .hero h1 { font-size: 30px; font-weight: 800; margin-bottom: 10px; background: linear-gradient(135deg, var(--text-primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { font-size: 14px; color: var(--text-secondary); max-width: 340px; margin: 0 auto; }
-
-    /* Card */
+    /* ═══════════════════════════════════════════
+       CARD
+    ═══════════════════════════════════════════ */
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 18px;
-      margin-top: 20px;
+      padding: 24px;
+      margin-top: 24px;
       box-shadow: var(--shadow);
-    }
-    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-    .card-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-    .card-title { font-size: 16px; font-weight: 700; }
-    .card-subtitle { font-size: 12px; color: var(--text-muted); }
-
-    /* Form */
-    .input-group { margin-bottom: 14px; }
-    .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .input-group input, .input-group textarea, .input-group select {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      font-size: 14px;
-      font-family: inherit;
       transition: var(--transition);
     }
-    .input-group input:focus, .input-group textarea:focus, .input-group select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-    .input-group textarea { min-height: 90px; resize: vertical; }
-    .input-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%737373' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
-    .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card:hover { border-color: var(--border-hover); }
 
-    /* Output */
-    .output-section { margin-top: 18px; display: none; }
-    .output-section.show { display: block; animation: fadeIn 0.3s ease; }
-    .output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .output-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-header-left { display: flex; align-items: center; gap: 12px; }
+    .card-icon {
+      width: 40px; height: 40px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(130,100,255,0.2);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--purple);
+      flex-shrink: 0;
+    }
+    .card-icon svg { width: 20px; height: 20px; }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .card-subtitle { font-size: 12px; color: var(--text-muted); }
+
+    /* ═══════════════════════════════════════════
+       FORM ELEMENTS
+    ═══════════════════════════════════════════ */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .form-label svg { width: 12px; height: 12px; }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: var(--transition);
+      outline: none;
+    }
+    .form-input:hover, .form-textarea:hover, .form-select:hover {
+      border-color: var(--border-hover);
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--border-focus);
+      background: var(--bg-elevated);
+      box-shadow: 0 0 0 3px rgba(130,100,255,0.08);
+    }
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    .form-select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239898b8' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+    .form-select option { background: var(--bg-elevated); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* ═══════════════════════════════════════════
+       TABS (Language switcher style)
+    ═══════════════════════════════════════════ */
+    .lang-tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .lang-tab {
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .lang-tab:hover { color: var(--text-primary); border-color: var(--border-hover); }
+    .lang-tab.active { color: var(--purple); background: var(--purple-dim); border-color: rgba(130,100,255,0.3); }
+
+    /* ═══════════════════════════════════════════
+       CODE OUTPUT
+    ═══════════════════════════════════════════ */
+    .output-section {
+      display: none;
+      margin-top: 20px;
+      animation: pageIn 0.3s ease;
+    }
+    .output-section.visible { display: block; }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .output-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    .output-label svg { width: 14px; height: 14px; }
     .output-actions { display: flex; gap: 6px; }
-    .code-output { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 6px; padding: 14px; max-height: 300px; overflow: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; white-space: pre-wrap; }
-    .code-output .keyword { color: #c792ea; }
-    .code-output .string { color: #c3e88d; }
-    .code-output .function { color: #82aaff; }
-    .code-output .comment { color: #546e7a; }
 
-    /* Saved Codes */
-    .saved-section { margin-top: 32px; }
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .section-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .section-count { padding: 3px 10px; background: var(--bg-tertiary); border-radius: 50px; font-size: 11px; color: var(--text-secondary); }
-    .codes-list { display: flex; flex-direction: column; gap: 10px; }
-    .code-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; transition: var(--transition); }
-    .code-item:hover { border-color: var(--border-light); transform: translateY(-2px); }
-    .code-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-    .code-item-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; display: flex; gap: 10px; }
-    .code-item-preview { font-size: 12px; color: var(--text-secondary); max-height: 50px; overflow: hidden; font-family: monospace; margin-bottom: 10px; }
-    .code-item-actions { display: flex; gap: 6px; }
+    .code-block {
+      position: relative;
+      background: #090912;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .code-lang-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .code-dots { display: flex; gap: 6px; }
+    .code-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .code-dot-red   { background: #ff5f57; }
+    .code-dot-yellow{ background: #ffbd2e; }
+    .code-dot-green { background: #28c840; }
 
-    /* Chat Page */
-    .chat-container { display: flex; flex-direction: column; height: calc(100vh - 100px); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-    .chat-header { padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
-    .chat-header h2 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-    .chat-header p { font-size: 11px; color: var(--text-muted); }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-    .chat-message { display: flex; gap: 10px; max-width: 85%; }
-    .chat-message.user { align-self: flex-end; flex-direction: row-reverse; }
-    .chat-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .chat-message.bot .chat-avatar { background: var(--accent); color: white; }
-    .chat-message.user .chat-avatar { background: var(--bg-tertiary); color: var(--text-muted); }
-    .chat-content { background: var(--bg-secondary); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); }
-    .chat-message.user .chat-content { background: var(--accent-light); border-color: var(--accent); }
-    .chat-content p { font-size: 13px; line-height: 1.5; }
-    .chat-input { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-secondary); display: flex; gap: 10px; }
-    .chat-input input { flex: 1; padding: 10px 14px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; }
-    .chat-input input:focus { outline: none; border-color: var(--accent); }
-    .chat-input .btn { padding: 10px 16px; }
+    pre.code-pre {
+      padding: 16px;
+      max-height: 320px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c9d1d9;
+    }
 
-    /* Dashboard */
-    .dashboard-header { margin-bottom: 20px; }
-    .dashboard-header h2 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-    .dashboard-header p { font-size: 13px; color: var(--text-muted); }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; align-items: center; gap: 12px; }
-    .stat-icon { width: 38px; height: 38px; background: var(--accent-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--accent); }
-    .stat-value { font-size: 22px; font-weight: 700; }
-    .stat-label { font-size: 11px; color: var(--text-muted); }
+    /* Syntax highlight tokens */
+    .tok-keyword  { color: #ff7b72; }
+    .tok-string   { color: #a5d6ff; }
+    .tok-function { color: #d2a8ff; }
+    .tok-comment  { color: #5a6580; font-style: italic; }
+    .tok-number   { color: #f8c555; }
+    .tok-operator { color: #79c0ff; }
+    .tok-type     { color: #ffa657; }
 
-    /* Docs */
-    .docs-layout { display: grid; grid-template-columns: 220px 1fr; gap: 18px; }
-    .docs-sidebar { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; height: fit-content; position: sticky; top: 68px; }
-    .docs-search { margin-bottom: 14px; }
-    .docs-search input { width: 100%; padding: 8px 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; }
-    .docs-search input:focus { outline: none; border-color: var(--accent); }
-    .docs-nav { display: flex; flex-direction: column; gap: 3px; }
-    .docs-link { padding: 8px 12px; color: var(--text-secondary); text-decoration: none; font-size: 13px; border-radius: 5px; transition: var(--transition); }
-    .docs-link:hover { background: var(--bg-hover); color: var(--text-primary); }
-    .docs-link.active { background: var(--accent-light); color: var(--accent); }
-    .docs-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
-    .docs-content h2 { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
-    .docs-content h3 { font-size: 15px; font-weight: 600; margin: 18px 0 10px; }
-    .docs-content p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
-    .docs-content ol, .docs-content ul { margin-left: 18px; margin-bottom: 14px; }
-    .docs-content li { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+    /* ═══════════════════════════════════════════
+       SAVED CODES LIST
+    ═══════════════════════════════════════════ */
+    .section { margin-top: 32px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .section-title svg { width: 18px; height: 18px; color: var(--purple); }
+    .count-badge {
+      padding: 3px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
 
-    /* Auth Pages */
-    .auth-container { max-width: 380px; margin: 60px auto; padding: 24px; }
-    .auth-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; }
-    .auth-header { text-align: center; margin-bottom: 24px; }
-    .auth-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-    .auth-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-    .auth-subtitle { font-size: 13px; color: var(--text-secondary); }
-    .auth-tabs { display: flex; gap: 4px; background: var(--bg-tertiary); padding: 4px; border-radius: 6px; margin-bottom: 20px; }
-    .auth-tab { flex: 1; padding: 8px; background: transparent; border: none; border-radius: 5px; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: var(--transition); font-family: inherit; }
-    .auth-tab.active { background: var(--bg-card); color: var(--text-primary); }
-    .auth-form { display: none; }
-    .auth-form.active { display: block; animation: fadeIn 0.3s ease; }
-    .auth-footer { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-secondary); }
-    .auth-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
-    .auth-footer a:hover { text-decoration: underline; }
+    .codes-grid { display: flex; flex-direction: column; gap: 10px; }
 
-    /* Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); padding: 16px; }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 360px; padding: 24px; transform: scale(0.95); transition: var(--transition); }
-    .modal-overlay.active .modal { transform: scale(1); }
+    .code-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .code-card:hover { border-color: rgba(130,100,255,0.25); background: var(--bg-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .code-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .code-card-title { font-size: 14px; font-weight: 600; }
+    .code-card-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .code-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .code-tag svg { width: 10px; height: 10px; }
+    .code-tag.lang { color: var(--cyan); border-color: var(--cyan-dim); background: var(--cyan-dim); }
+    .code-preview {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      max-height: 44px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      line-height: 1.6;
+      background: var(--bg-input);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    .code-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
-    /* Toast */
-    .toast-container { position: fixed; bottom: 20px; right: 20px; left: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 3000; }
-    .toast { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0; transition: var(--transition); }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { border-left: 3px solid var(--success); }
-    .toast.error { border-left: 3px solid var(--error); }
-    .toast-message { font-size: 13px; flex: 1; }
+    /* ═══════════════════════════════════════════
+       EMPTY STATE
+    ═══════════════════════════════════════════ */
+    .empty-state {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--text-secondary);
+    }
+    .empty-icon {
+      width: 60px; height: 60px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: var(--text-muted);
+    }
+    .empty-icon svg { width: 24px; height: 24px; }
+    .empty-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--text-muted); }
 
-    /* User */
-    .user-section { display: none; align-items: center; gap: 8px; }
-    .user-section.active { display: flex; }
-    .user-avatar { width: 30px; height: 30px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
-    .user-name { font-size: 13px; font-weight: 600; }
-
-    /* Empty */
-    .empty-state { text-align: center; padding: 32px 16px; color: var(--text-secondary); }
-    .empty-icon { width: 48px; height: 48px; background: var(--bg-tertiary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
-    .empty-text { font-size: 14px; }
-    .empty-sub { font-size: 12px; color: var(--text-muted); }
-
-    /* Spinner */
-    .spinner { width: 14px; height: 14px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    /* ═══════════════════════════════════════════
+       SPINNER
+    ═══════════════════════════════════════════ */
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-right-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      flex-shrink: 0;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Responsive */
-    @media (min-width: 768px) {
-      .header { padding: 0 24px; }
-      .nav-links { display: flex; }
-      .hamburger { display: none; }
-      .mobile-menu { display: none; }
-      .main-content { padding: 80px 24px 40px; }
-      .hero h1 { font-size: 38px; }
-      .stats-grid { grid-template-columns: repeat(4, 1fr); }
-      .toast-container { left: auto; width: 320px; }
+    /* ═══════════════════════════════════════════
+       CHAT PAGE
+    ═══════════════════════════════════════════ */
+    .chat-wrap {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 120px);
+      max-height: 700px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
     }
-    @media (max-width: 767px) {
-      .nav-links { display: none; }
-      .select-row { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .docs-layout { grid-template-columns: 1fr; }
+    .chat-header-bar {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-elevated);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+    .chat-bot-avatar {
+      width: 38px; height: 38px;
+      background: var(--gradient);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .chat-bot-avatar svg { width: 20px; height: 20px; }
+    .chat-bot-info h3 { font-size: 15px; font-weight: 700; }
+    .chat-bot-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--green);
+    }
+    .status-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green); }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .msg {
+      display: flex;
+      gap: 10px;
+      max-width: 88%;
+    }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .msg.bot  .msg-avatar { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(130,100,255,0.2); }
+    .msg.user .msg-avatar { background: var(--gradient); color: white; }
+    .msg-avatar svg { width: 15px; height: 15px; }
+    .msg-bubble {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      line-height: 1.55;
+      border: 1px solid var(--border);
+    }
+    .msg.bot  .msg-bubble { background: var(--bg-elevated); }
+    .msg.user .msg-bubble { background: var(--purple-dim); border-color: rgba(130,100,255,0.25); }
+
+    .chat-input-bar {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-elevated);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .chat-input-bar input {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .chat-input-bar input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(130,100,255,0.08); }
+    .chat-send-btn {
+      width: 40px; height: 40px;
+      background: var(--gradient-btn);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .chat-send-btn:hover { transform: scale(1.05); box-shadow: 0 0 16px rgba(124,58,237,0.4); }
+    .chat-send-btn svg { width: 17px; height: 17px; }
+
+    /* ═══════════════════════════════════════════
+       DASHBOARD
+    ═══════════════════════════════════════════ */
+    .page-header { margin-bottom: 24px; }
+    .page-header h2 {
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .page-header h2 svg { width: 24px; height: 24px; color: var(--purple); }
+    .page-header p { font-size: 13px; color: var(--text-muted); }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 28px; }
+    @media (min-width: 600px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      transition: var(--transition);
+    }
+    .stat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+    .stat-icon {
+      width: 38px; height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .stat-icon svg { width: 18px; height: 18px; }
+    .stat-icon.purple { background: var(--purple-dim); color: var(--purple); }
+    .stat-icon.cyan   { background: var(--cyan-dim); color: var(--cyan); }
+    .stat-icon.green  { background: var(--green-dim); color: var(--green); }
+    .stat-icon.orange { background: rgba(255,140,66,0.12); color: var(--orange); }
+    .stat-value { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 500; }
+
+    /* ═══════════════════════════════════════════
+       DOCS PAGE
+    ═══════════════════════════════════════════ */
+    .docs-layout { display: grid; gap: 16px; }
+    @media (min-width: 640px) { .docs-layout { grid-template-columns: 200px 1fr; } }
+
+    .docs-sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      height: fit-content;
+      position: sticky;
+      top: 76px;
+    }
+    .docs-search-input {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+    .docs-search-input:focus { border-color: var(--border-focus); }
+
+    .docs-nav { display: flex; flex-direction: column; gap: 2px; }
+    .docs-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .docs-nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .docs-nav-item.active { background: var(--purple-dim); color: var(--purple); }
+    .docs-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    .docs-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .docs-content h2 { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+    .docs-content h3 { font-size: 15px; font-weight: 700; margin: 20px 0 8px; color: var(--text-primary); }
+    .docs-content p { font-size: 14px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 12px; }
+    .docs-content ul, .docs-content ol { margin-left: 20px; margin-bottom: 14px; }
+    .docs-content li { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.6; }
+    .docs-content pre { margin-top: 14px; }
+    .docs-content code {
+      padding: 2px 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--cyan);
+    }
+
+    /* ═══════════════════════════════════════════
+       AUTH PAGES
+    ═══════════════════════════════════════════ */
+    .auth-wrap {
+      max-width: 420px;
+      margin: 40px auto;
+    }
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--shadow-lg), 0 0 60px rgba(130,100,255,0.06);
+    }
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .auth-logo-mark {
+      width: 56px; height: 56px;
+      background: var(--gradient);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      box-shadow: 0 0 30px rgba(130,100,255,0.35);
+    }
+    .auth-logo-mark svg { width: 28px; height: 28px; color: white; }
+    .auth-logo h2 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .auth-logo p { font-size: 13px; color: var(--text-muted); }
+
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 22px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 9px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .auth-tab:hover { color: var(--text-secondary); }
+    .auth-tab.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+
+    .auth-form { display: none; }
+    .auth-form.active { display: block; animation: pageIn 0.25s ease; }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .auth-footer a { color: var(--purple); font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* ═══════════════════════════════════════════
+       MODAL (View Code)
+    ═══════════════════════════════════════════ */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-slow);
+      padding: 16px;
+    }
+    .modal-backdrop.open { opacity: 1; visibility: visible; }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 560px;
+      max-height: 85vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.94) translateY(8px);
+      transition: var(--transition-slow);
+      box-shadow: var(--shadow-lg);
+    }
+    .modal-backdrop.open .modal-box { transform: scale(1) translateY(0); }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title { font-size: 15px; font-weight: 700; }
+    .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+
+    /* ═══════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════ */
+    .toast-stack {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    @media (max-width: 480px) { .toast-stack { left: 12px; right: 12px; } }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      font-weight: 500;
+      transform: translateX(100px);
+      opacity: 0;
+      transition: var(--transition-slow);
+      pointer-events: auto;
+      min-width: 240px;
+      max-width: 340px;
+      box-shadow: var(--shadow);
+    }
+    @media (max-width: 480px) { .toast { min-width: unset; max-width: unset; } }
+    .toast.in { transform: translateX(0); opacity: 1; }
+    .toast-icon { flex-shrink: 0; }
+    .toast-icon svg { width: 17px; height: 17px; }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.success .toast-icon { color: var(--green); }
+    .toast.error   { border-left: 3px solid #f87171; }
+    .toast.error   .toast-icon { color: #f87171; }
+    .toast.info    { border-left: 3px solid var(--cyan); }
+    .toast.info    .toast-icon { color: var(--cyan); }
+
+    /* ═══════════════════════════════════════════
+       DIVIDER / MISC
+    ═══════════════════════════════════════════ */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+    .tag-purple { color: var(--purple); }
+    .tag-cyan   { color: var(--cyan); }
+    .tag-green  { color: var(--green); }
+
+    /* Progress bar for loading */
+    .loading-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--gradient);
+      z-index: 9998;
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 0 2px 2px 0;
+    }
+
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <div class="bg-pattern"></div>
 
-    <!-- Header -->
+  <!-- Loading bar -->
+  <div class="loading-bar" id="loadingBar"></div>
+
+  <!-- Background Effects -->
+  <div class="bg-effects" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+
+  <div class="app-wrapper">
+
+    <!-- ═══════════════ HEADER ═══════════════ -->
     <header class="header">
-      <a href="#" class="logo" onclick="showPage('home')">
-        <div class="logo-icon"><i data-lucide="zap" style="width: 16px; height: 16px;"></i></div>
-        <span>AI Coder</span>
+      <a class="logo" href="#" onclick="navTo('home'); return false;">
+        <div class="logo-mark">
+          <i data-lucide="zap" style="width:18px;height:18px;color:white;"></i>
+        </div>
+        <div class="logo-text">AI<span>Coder</span></div>
       </a>
 
-      <nav class="nav-links">
-        <a href="#" class="nav-link active" onclick="showPage('home')" data-page="home"><i data-lucide="sparkles" style="width:14px;height:14px;margin-right:4px;"></i>Generate</a>
-        <a href="#" class="nav-link" onclick="showPage('chat')" data-page="chat"><i data-lucide="message-square" style="width:14px;height:14px;margin-right:4px;"></i>Chat</a>
-        <a href="#" class="nav-link" onclick="showPage('dashboard')" data-page="dashboard"><i data-lucide="layout-dashboard" style="width:14px;height:14px;margin-right:4px;"></i>Dashboard</a>
-        <a href="#" class="nav-link" onclick="showPage('docs')" data-page="docs"><i data-lucide="book-open" style="width:14px;height:14px;margin-right:4px;"></i>Docs</a>
-        <a href="#" class="nav-link" onclick="showPage('login')" data-page="login"><i data-lucide="log-in" style="width:14px;height:14px;margin-right:4px;"></i>Login</a>
+      <nav class="nav">
+        <button class="nav-item active" data-page="home"    onclick="navTo('home')">
+          <i data-lucide="sparkles"></i> Generate
+        </button>
+        <button class="nav-item"        data-page="chat"    onclick="navTo('chat')">
+          <i data-lucide="message-circle"></i> Chat
+        </button>
+        <button class="nav-item"        data-page="dashboard" onclick="navTo('dashboard')">
+          <i data-lucide="bar-chart-2"></i> Dashboard
+        </button>
+        <button class="nav-item"        data-page="docs"    onclick="navTo('docs')">
+          <i data-lucide="book-open"></i> Docs
+        </button>
       </nav>
 
-      <div class="header-actions">
-        <div class="user-section" id="userSection">
+      <div class="header-right">
+        <!-- User pill (shown when logged in) -->
+        <div class="user-pill" id="userPill">
           <div class="user-avatar" id="userAvatar">U</div>
-          <span class="user-name" id="userName">User</span>
+          <span class="user-name-text" id="userNameText">User</span>
+          <i data-lucide="log-out" style="width:13px;height:13px;color:var(--text-muted);margin-left:4px;" onclick="doLogout()"></i>
         </div>
-        <button class="btn btn-primary btn-sm" id="loginBtn" onclick="showPage('login')">
-          <i data-lucide="log-in" style="width:12px;height:12px;"></i>Login
+        <!-- Login button (shown when logged out) -->
+        <button class="btn btn-primary btn-sm" id="loginHeaderBtn" onclick="navTo('login')">
+          <i data-lucide="log-in"></i> Sign In
+        </button>
+        <!-- Hamburger -->
+        <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+          <span></span><span></span><span></span>
         </button>
       </div>
-      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-      </button>
     </header>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="#" class="mobile-menu-item active" onclick="showPage('home');toggleMenu()"><i data-lucide="sparkles"></i>Generate Code</a>
-      <a href="#" class="mobile-menu-item" onclick="showPage('chat');toggleMenu()"><i data-lucide="message-square"></i>AI Chat</a>
-      <a href="#" class="mobile-menu-item" onclick="showPage('dashboard');toggleMenu()"><i data-lucide="layout-dashboard"></i>Dashboard</a>
-      <a href="#" class="mobile-menu-item" onclick="showPage('docs');toggleMenu()"><i data-lucide="book-open"></i>Docs & Search</a>
-      <a href="#" class="mobile-menu-item" onclick="showPage('login');toggleMenu()"><i data-lucide="log-in"></i>Login / Register</a>
+    <!-- ═══════════════ MOBILE NAV ═══════════════ -->
+    <div class="mobile-nav" id="mobileNav">
+      <button class="mobile-nav-item active" data-page="home"      onclick="navTo('home'); toggleMobileNav();">
+        <i data-lucide="sparkles"></i> Generate Code
+      </button>
+      <button class="mobile-nav-item"        data-page="chat"      onclick="navTo('chat'); toggleMobileNav();">
+        <i data-lucide="message-circle"></i> AI Chat
+      </button>
+      <button class="mobile-nav-item"        data-page="dashboard" onclick="navTo('dashboard'); toggleMobileNav();">
+        <i data-lucide="bar-chart-2"></i> Dashboard
+      </button>
+      <button class="mobile-nav-item"        data-page="docs"      onclick="navTo('docs'); toggleMobileNav();">
+        <i data-lucide="book-open"></i> Docs
+      </button>
+      <button class="mobile-nav-item"        data-page="login"     onclick="navTo('login'); toggleMobileNav();">
+        <i data-lucide="log-in"></i> Sign In / Register
+      </button>
     </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Home Page -->
-      <div id="page-home" class="page active">
-        <section class="hero">
-          <div class="hero-badge">AI-Powered Code Generation</div>
-          <h1>Smart Code Generator</h1>
-          <p>Describe what you want to build and let AI write production-ready code instantly.</p>
-        </section>
+    <!-- ═══════════════ MAIN ═══════════════ -->
+    <main class="main">
 
+      <!-- ─── HOME PAGE ─── -->
+      <section id="page-home" class="page active">
+
+        <div class="hero">
+          <div class="hero-badge">
+            <div class="live-dot"></div>
+            AI-Powered Code Generation
+          </div>
+          <h1>Build Faster with<br><span class="gradient-text">Intelligent Code</span></h1>
+          <p>Describe what you want to build and get production-ready code in seconds — powered by advanced AI.</p>
+          <div class="hero-stats">
+            <div class="hero-stat"><i data-lucide="code-2"></i> <strong>7</strong> Languages</div>
+            <div class="hero-stat"><i data-lucide="zap"></i> <strong>Instant</strong> Results</div>
+            <div class="hero-stat"><i data-lucide="shield-check"></i> <strong>Free</strong> to use</div>
+          </div>
+        </div>
+
+        <!-- Generator Card -->
         <div class="card">
           <div class="card-header">
-            <div class="card-icon"><i data-lucide="code" style="width:18px;height:18px;"></i></div>
-            <div>
-              <div class="card-title">Code Generator</div>
-              <div class="card-subtitle">Powered by advanced AI</div>
+            <div class="card-header-left">
+              <div class="card-icon">
+                <i data-lucide="wand-2"></i>
+              </div>
+              <div>
+                <div class="card-title">Code Generator</div>
+                <div class="card-subtitle">Powered by advanced AI models</div>
+              </div>
             </div>
           </div>
-          <form id="codeGeneratorForm">
-            <div class="input-group">
-              <label>What do you want to build?</label>
-              <textarea id="prompt" placeholder="e.g., A responsive login form with email validation..." required></textarea>
+
+          <form id="genForm" onsubmit="handleGenerate(event)">
+            <div class="form-group">
+              <label class="form-label">
+                <i data-lucide="pencil-line"></i> What do you want to build?
+              </label>
+              <textarea
+                class="form-textarea"
+                id="promptInput"
+                placeholder="e.g., A REST API endpoint that validates user emails and stores them in a database..."
+                required
+              ></textarea>
             </div>
-            <div class="select-row">
-              <div class="input-group">
-                <label>Language</label>
-                <select id="language">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="code-2"></i> Language</label>
+                <select class="form-select" id="langSelect">
                   <option value="javascript">JavaScript</option>
                   <option value="typescript">TypeScript</option>
                   <option value="python">Python</option>
-                  <option value="html">HTML/CSS</option>
-                  <option value="react">React</option>
+                  <option value="html">HTML / CSS</option>
+                  <option value="react">React (JSX)</option>
                   <option value="go">Go</option>
                   <option value="rust">Rust</option>
                 </select>
               </div>
-              <div class="input-group">
-                <label>Framework</label>
-                <select id="framework">
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="layers"></i> Framework</label>
+                <select class="form-select" id="frameworkSelect">
                   <option value="">None</option>
                   <option value="express">Express.js</option>
                   <option value="nextjs">Next.js</option>
                   <option value="fastapi">FastAPI</option>
                   <option value="flask">Flask</option>
+                  <option value="tailwind">Tailwind CSS</option>
                 </select>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary" id="generateBtn" style="width:100%;margin-top:4px;">
-              <i data-lucide="sparkles" style="width:14px;height:14px;"></i>Generate Code
+
+            <button type="submit" class="btn btn-primary btn-full" id="genBtn">
+              <i data-lucide="sparkles"></i> Generate Code
             </button>
           </form>
+
+          <!-- Output -->
           <div class="output-section" id="outputSection">
+            <div class="divider"></div>
             <div class="output-header">
-              <span class="output-title"><i data-lucide="check-circle" style="width:14px;height:14px;color:var(--success);margin-right:6px;"></i>Generated Code</span>
+              <div class="output-label">
+                <i data-lucide="check-circle-2"></i>
+                Generated Code
+              </div>
               <div class="output-actions">
-                <button class="btn btn-ghost btn-sm" onclick="handleCopy()"><i data-lucide="copy" style="width:12px;height:12px;"></i>Copy</button>
-                <button class="btn btn-primary btn-sm" onclick="handleSave()"><i data-lucide="save" style="width:12px;height:12px;"></i>Save</button>
+                <button class="btn btn-secondary btn-sm" onclick="copyCurrentCode()">
+                  <i data-lucide="copy"></i> Copy
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="saveCurrentCode()">
+                  <i data-lucide="bookmark-plus"></i> Save
+                </button>
               </div>
             </div>
-            <div class="code-output" id="codeOutput"></div>
+            <div class="code-block">
+              <div class="code-block-header">
+                <div class="code-dots">
+                  <div class="code-dot code-dot-red"></div>
+                  <div class="code-dot code-dot-yellow"></div>
+                  <div class="code-dot code-dot-green"></div>
+                </div>
+                <span class="code-lang-badge" id="outputLangBadge">JS</span>
+              </div>
+              <pre class="code-pre" id="codeOutputPre"></pre>
+            </div>
           </div>
         </div>
 
-        <div class="saved-section">
+        <!-- Saved Codes -->
+        <div class="section">
           <div class="section-header">
-            <div class="section-title"><i data-lucide="folder-code" style="width:18px;height:18px;color:var(--accent);"></i>Your Saved Codes</div>
-            <span class="section-count" id="codesCount">0</span>
+            <div class="section-title">
+              <i data-lucide="folder-code"></i>
+              Saved Codes
+            </div>
+            <span class="count-badge" id="savedCount">0</span>
           </div>
-          <div class="codes-list" id="codesList">
+          <div class="codes-grid" id="savedList">
             <div class="empty-state">
-              <div class="empty-icon"><i data-lucide="file-code" style="width:20px;height:20px;"></i></div>
-              <div class="empty-text">No saved codes yet</div>
-              <div class="empty-sub">Generate and save your first code!</div>
+              <div class="empty-icon"><i data-lucide="file-code-2"></i></div>
+              <div class="empty-title">No saved codes yet</div>
+              <div class="empty-sub">Generate and save your first snippet!</div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Chat Page -->
-      <div id="page-chat" class="page">
-        <div class="chat-container">
-          <div class="chat-header">
-            <h2><i data-lucide="message-square"></i> AI Code Chat</h2>
-            <p>Ask questions or generate code using natural language</p>
+      </section>
+
+      <!-- ─── CHAT PAGE ─── -->
+      <section id="page-chat" class="page">
+        <div class="chat-wrap">
+          <div class="chat-header-bar">
+            <div class="chat-bot-avatar">
+              <i data-lucide="bot"></i>
+            </div>
+            <div class="chat-bot-info">
+              <h3>AI Code Assistant</h3>
+              <div class="chat-bot-status">
+                <div class="status-dot"></div> Online
+              </div>
+            </div>
           </div>
+
           <div class="chat-messages" id="chatMessages">
-            <div class="chat-message bot">
-              <div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div>
-              <div class="chat-content"><p>Hello! I'm your AI coding assistant. Ask me to write code, explain concepts, or help with debugging!</p></div>
+            <div class="msg bot">
+              <div class="msg-avatar"><i data-lucide="bot"></i></div>
+              <div class="msg-bubble">
+                👋 Hello! I'm your AI coding assistant. Ask me to write code, explain concepts, review your code, or help with debugging!
+              </div>
             </div>
           </div>
-          <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Ask me to write code..." />
-            <button class="btn btn-primary" onclick="sendChatMessage()"><i data-lucide="send" style="width:14px;height:14px;"></i></button>
+
+          <div class="chat-input-bar">
+            <input
+              type="text"
+              id="chatInput"
+              placeholder="Ask me to write code or explain something..."
+            />
+            <button class="chat-send-btn" onclick="sendChat()">
+              <i data-lucide="send-horizontal"></i>
+            </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Dashboard Page -->
-      <div id="page-dashboard" class="page">
-        <div class="dashboard-header">
-          <h2><i data-lucide="layout-dashboard"></i> Dashboard</h2>
-          <p>Your code generation statistics</p>
+      <!-- ─── DASHBOARD PAGE ─── -->
+      <section id="page-dashboard" class="page">
+        <div class="page-header">
+          <h2><i data-lucide="bar-chart-2"></i> Dashboard</h2>
+          <p>Track your code generation activity and stats</p>
         </div>
+
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="code" style="width:18px;height:18px;"></i></div>
-            <div><div class="stat-value" id="totalCodes">0</div><div class="stat-label">Total Codes</div></div>
+            <div class="stat-icon purple"><i data-lucide="code-2"></i></div>
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Total Generated</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="calendar" style="width:18px;height:18px;"></i></div>
-            <div><div class="stat-value" id="thisMonth">0</div><div class="stat-label">This Month</div></div>
+            <div class="stat-icon cyan"><i data-lucide="calendar-days"></i></div>
+            <div class="stat-value" id="statMonth">0</div>
+            <div class="stat-label">This Month</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="clock" style="width:18px;height:18px;"></i></div>
-            <div><div class="stat-value" id="recentActivity">0</div><div class="stat-label">This Week</div></div>
+            <div class="stat-icon green"><i data-lucide="trending-up"></i></div>
+            <div class="stat-value" id="statWeek">0</div>
+            <div class="stat-label">This Week</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="star" style="width:18px;height:18px;"></i></div>
-            <div><div class="stat-value" id="favoriteLang">-</div><div class="stat-label">Top Language</div></div>
+            <div class="stat-icon orange"><i data-lucide="star"></i></div>
+            <div class="stat-value" id="statLang">—</div>
+            <div class="stat-label">Top Language</div>
           </div>
         </div>
-        <div class="saved-section">
+
+        <div class="section">
           <div class="section-header">
-            <div class="section-title"><i data-lucide="history"></i> Recent Activity</div>
+            <div class="section-title">
+              <i data-lucide="history"></i> Recent Activity
+            </div>
           </div>
-          <div class="codes-list" id="activityList">
+          <div class="codes-grid" id="activityList">
             <div class="empty-state">
-              <div class="empty-icon"><i data-lucide="activity" style="width:20px;height:20px;"></i></div>
-              <div class="empty-text">No recent activity</div>
-              <div class="empty-sub">Generate some code to see activity</div>
+              <div class="empty-icon"><i data-lucide="activity"></i></div>
+              <div class="empty-title">No activity yet</div>
+              <div class="empty-sub">Generate some code to see it here</div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Docs Page -->
-      <div id="page-docs" class="page">
+      <!-- ─── DOCS PAGE ─── -->
+      <section id="page-docs" class="page">
         <div class="docs-layout">
           <aside class="docs-sidebar">
-            <div class="docs-search"><input type="text" id="docsSearch" placeholder="Search docs..." oninput="searchDocs()" /></div>
+            <input
+              class="docs-search-input"
+              type="text"
+              id="docsSearchInput"
+              placeholder="Search docs..."
+              oninput="filterDocs()"
+            />
             <nav class="docs-nav">
-              <a href="#" onclick="showDoc('getting-started')" class="docs-link active">Getting Started</a>
-              <a href="#" onclick="showDoc('authentication')" class="docs-link">Authentication</a>
-              <a href="#" onclick="showDoc('api-reference')" class="docs-link">API Reference</a>
-              <a href="#" onclick="showDoc('code-generation')" class="docs-link">Code Generation</a>
-              <a href="#" onclick="showDoc('examples')" class="docs-link">Examples</a>
-              <a href="#" onclick="showDoc('faq')" class="docs-link">FAQ</a>
-              <a href="#" onclick="showDoc('search')" class="docs-link">🔍 Code Search</a>
+              <button class="docs-nav-item active" data-doc="getting-started" onclick="showDoc('getting-started', this)">
+                <i data-lucide="rocket"></i> Getting Started
+              </button>
+              <button class="docs-nav-item" data-doc="authentication" onclick="showDoc('authentication', this)">
+                <i data-lucide="lock"></i> Authentication
+              </button>
+              <button class="docs-nav-item" data-doc="api-reference" onclick="showDoc('api-reference', this)">
+                <i data-lucide="terminal"></i> API Reference
+              </button>
+              <button class="docs-nav-item" data-doc="code-generation" onclick="showDoc('code-generation', this)">
+                <i data-lucide="wand-2"></i> Code Generation
+              </button>
+              <button class="docs-nav-item" data-doc="examples" onclick="showDoc('examples', this)">
+                <i data-lucide="layout-template"></i> Examples
+              </button>
+              <button class="docs-nav-item" data-doc="faq" onclick="showDoc('faq', this)">
+                <i data-lucide="help-circle"></i> FAQ
+              </button>
             </nav>
           </aside>
-          <div class="docs-content">
-            <div id="doc-content">
-              <h2>Getting Started</h2>
-              <p>Welcome to AI Coder! This documentation will help you get started.</p>
-              <h3>Quick Start</h3>
-              <ol>
-                <li>Create an account or login</li>
-                <li>Enter a description of what you want to build</li>
-                <li>Select your preferred programming language</li>
-                <li>Click Generate and get your code!</li>
-              </ol>
-              <h3>Features</h3>
-              <ul>
-                <li><strong>AI Code Generation</strong> - Describe what you want and get code</li>
-                <li><strong>Chat Interface</strong> - Ask coding questions</li>
-                <li><strong>Save & Manage</strong> - Save your generated code</li>
-                <li><strong>Documentation</strong> - Full docs with search</li>
-              </ul>
-            </div>
+          <div class="docs-content" id="docsContent">
+            <!-- Filled by JS -->
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Login Page -->
-      <div id="page-login" class="page">
-        <div class="auth-container">
+      <!-- ─── LOGIN / REGISTER PAGE ─── -->
+      <section id="page-login" class="page">
+        <div class="auth-wrap">
           <div class="auth-card">
-            <div class="auth-header">
-              <div class="auth-icon"><i data-lucide="user" style="width:24px;height:24px;"></i></div>
-              <h2 class="auth-title">Welcome</h2>
-              <p class="auth-subtitle">Sign in to save your generated code</p>
+            <div class="auth-logo">
+              <div class="auth-logo-mark"><i data-lucide="zap"></i></div>
+              <h2>Welcome back</h2>
+              <p>Sign in to save and manage your generated code</p>
             </div>
+
             <div class="auth-tabs">
-              <button class="auth-tab active" data-tab="login">Sign In</button>
-              <button class="auth-tab" data-tab="register">Create Account</button>
+              <button class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')">Sign In</button>
+              <button class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')">Create Account</button>
             </div>
-            <form class="auth-form active" id="loginForm">
-              <div class="input-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" required></div>
-              <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" required></div>
-              <button type="submit" class="btn btn-primary" style="width:100%;"><i data-lucide="log-in" style="width:14px;height:14px;"></i>Sign In</button>
-            </form>
-            <form class="auth-form" id="registerForm">
-              <div class="input-group"><label>Full Name</label><input type="text" id="registerName" placeholder="John Doe" required></div>
-              <div class="input-group"><label>Email</label><input type="email" id="registerEmail" placeholder="you@example.com" required></div>
-              <div class="input-group"><label>Password</label><input type="password" id="registerPassword" placeholder="••••••••" required></div>
-              <button type="submit" class="btn btn-primary" style="width:100%;"><i data-lucide="user-plus" style="width:14px;height:14px;"></i>Create Account</button>
-            </form>
-            <div class="auth-footer">
-              <a href="#" onclick="showPage('reset')">Forgot Password?</a>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Reset Password Page -->
-      <div id="page-reset" class="page">
-        <div class="auth-container">
-          <div class="auth-card">
-            <div class="auth-header">
-              <div class="auth-icon"><i data-lucide="key-round" style="width:24px;height:24px;"></i></div>
-              <h2 class="auth-title">Reset Password</h2>
-              <p class="auth-subtitle">Enter your email to reset password</p>
-            </div>
-            <form id="resetForm">
-              <div class="input-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@example.com" required></div>
-              <button type="submit" class="btn btn-primary" style="width:100%;"><i data-lucide="mail" style="width:14px;height:14px;"></i>Send Reset Link</button>
+            <!-- Login form -->
+            <form class="auth-form active" id="loginForm" onsubmit="doLogin(event)">
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="mail"></i> Email</label>
+                <input class="form-input" type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" />
+              </div>
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="lock-keyhole"></i> Password</label>
+                <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" />
+              </div>
+              <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+                <i data-lucide="log-in"></i> Sign In
+              </button>
             </form>
+
+            <!-- Register form -->
+            <form class="auth-form" id="registerForm" onsubmit="doRegister(event)">
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="user"></i> Full Name</label>
+                <input class="form-input" type="text" id="regName" placeholder="John Doe" required autocomplete="name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="mail"></i> Email</label>
+                <input class="form-input" type="email" id="regEmail" placeholder="you@example.com" required autocomplete="email" />
+              </div>
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="lock-keyhole"></i> Password</label>
+                <input class="form-input" type="password" id="regPassword" placeholder="Min 8 characters" required minlength="8" autocomplete="new-password" />
+              </div>
+              <button type="submit" class="btn btn-primary btn-full" id="registerBtn">
+                <i data-lucide="user-plus"></i> Create Account
+              </button>
+            </form>
+
             <div class="auth-footer">
-              <a href="#" onclick="showPage('login')">Back to Login</a>
+              <a href="#" onclick="navTo('reset'); return false;">Forgot your password?</a>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <!-- ─── RESET PASSWORD PAGE ─── -->
+      <section id="page-reset" class="page">
+        <div class="auth-wrap">
+          <div class="auth-card">
+            <div class="auth-logo">
+              <div class="auth-logo-mark"><i data-lucide="key-round"></i></div>
+              <h2>Reset Password</h2>
+              <p>Enter your email address and we'll send a reset link</p>
+            </div>
+            <form id="resetForm" onsubmit="doReset(event)">
+              <div class="form-group">
+                <label class="form-label"><i data-lucide="mail"></i> Email</label>
+                <input class="form-input" type="email" id="resetEmail" placeholder="you@example.com" required autocomplete="email" />
+              </div>
+              <button type="submit" class="btn btn-primary btn-full">
+                <i data-lucide="send"></i> Send Reset Link
+              </button>
+            </form>
+            <div class="auth-footer">
+              <a href="#" onclick="navTo('login'); return false;">← Back to Sign In</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
+  </div><!-- /.app-wrapper -->
+
+  <!-- ═══════════════ VIEW CODE MODAL ═══════════════ -->
+  <div class="modal-backdrop" id="codeModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">Code Snippet</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="copyModalCode()">
+            <i data-lucide="copy"></i> Copy
+          </button>
+          <button class="btn-icon" onclick="closeModal()">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="code-block">
+          <div class="code-block-header">
+            <div class="code-dots">
+              <div class="code-dot code-dot-red"></div>
+              <div class="code-dot code-dot-yellow"></div>
+              <div class="code-dot code-dot-green"></div>
+            </div>
+            <span class="code-lang-badge" id="modalLangBadge">JS</span>
+          </div>
+          <pre class="code-pre" id="modalCodePre"></pre>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Toast -->
-  <div class="toast-container" id="toastContainer"></div>
+  <!-- ═══════════════ TOAST STACK ═══════════════ -->
+  <div class="toast-stack" id="toastStack"></div>
 
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
   <script>
-    // Initialize Lucide
-    lucide.createIcons();
+  (() => {
+    'use strict';
 
-    // State
-    let currentCode = '', currentPrompt = '', currentLanguage = 'javascript', currentFramework = '';
-    let currentUser = null;
+    // ══════════════════════════════════════════
+    // STATE
+    // ══════════════════════════════════════════
+    let state = {
+      currentCode: '',
+      currentPrompt: '',
+      currentLang: 'javascript',
+      currentFramework: '',
+      currentUser: null,
+      modalCode: '',
+      currentDocId: 'getting-started',
+    };
 
-    // Menu Toggle
-    function toggleMenu() {
-      document.getElementById('hamburger').classList.toggle('active');
-      document.getElementById('mobileMenu').classList.toggle('active');
+    // ══════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════
+    function init() {
+      lucide.createIcons();
+      checkAuth();
+      renderDoc('getting-started');
+      showDoc('getting-started', document.querySelector('[data-doc="getting-started"]'));
     }
 
-    // Show Page
-    function showPage(pageName) {
-      event.preventDefault();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // ══════════════════════════════════════════
+    // NAVIGATION
+    // ══════════════════════════════════════════
+    window.navTo = function(page) {
+      // Hide all pages
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + pageName).classList.add('active');
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      var navLink = document.querySelector('.nav-link[data-page="' + pageName + '"]');
-      if (navLink) navLink.classList.add('active');
-      document.getElementById('hamburger').classList.remove('active');
-      document.getElementById('mobileMenu').classList.remove('active');
+      const target = document.getElementById('page-' + page);
+      if (!target) return;
+      target.classList.add('active');
+
+      // Update desktop nav
+      document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.toggle('active', n.dataset.page === page);
+      });
+      // Update mobile nav
+      document.querySelectorAll('.mobile-nav-item').forEach(n => {
+        n.classList.toggle('active', n.dataset.page === page);
+      });
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
       lucide.createIcons();
-      if (pageName === 'dashboard') loadDashboardData();
-    }
 
-    // Auth Tabs
-    document.querySelectorAll('.auth-tab').forEach(tab => {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-        document.getElementById(this.dataset.tab + 'Form').classList.add('active');
-      });
+      if (page === 'dashboard') loadDashboard();
+    };
+
+    // ══════════════════════════════════════════
+    // HAMBURGER
+    // ══════════════════════════════════════════
+    window.toggleMobileNav = function() {
+      const ham = document.getElementById('hamburger');
+      const nav = document.getElementById('mobileNav');
+      ham.classList.toggle('open');
+      nav.classList.toggle('open');
+    };
+
+    // Close mobile nav when clicking outside
+    document.addEventListener('click', function(e) {
+      const ham = document.getElementById('hamburger');
+      const nav = document.getElementById('mobileNav');
+      if (!ham.contains(e.target) && !nav.contains(e.target)) {
+        ham.classList.remove('open');
+        nav.classList.remove('open');
+      }
     });
 
-    // Check Auth
+    // ══════════════════════════════════════════
+    // AUTH
+    // ══════════════════════════════════════════
     function checkAuth() {
-      var token = localStorage.getItem('authToken');
-      var user = localStorage.getItem('user');
-      if (token && user) {
-        try {
-          currentUser = JSON.parse(user);
-          document.getElementById('userSection').classList.add('active');
-          document.getElementById('loginBtn').style.display = 'none';
-          document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
-          document.getElementById('userName').textContent = currentUser.name;
-          loadSavedCodes();
-        } catch (e) {
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-        }
+      const token = localStorage.getItem('authToken');
+      const raw   = localStorage.getItem('user');
+      if (!token || !raw) return;
+      try {
+        state.currentUser = JSON.parse(raw);
+        applyLoggedInUI();
+        loadSavedCodes();
+      } catch {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
       }
     }
-    checkAuth();
 
-    // Toast
-    function showToast(message, type) {
-      var container = document.getElementById('toastContainer');
-      var toast = document.createElement('div');
-      toast.className = 'toast ' + type;
-      toast.innerHTML = '<i data-lucide="' + (type === 'success' ? 'check-circle' : 'x-circle') + '" style="width:16px;height:16px;"></i><span class="toast-message">' + message + '</span>';
-      container.appendChild(toast);
+    function applyLoggedInUI() {
+      const u = state.currentUser;
+      if (!u) return;
+      document.getElementById('userPill').classList.add('visible');
+      document.getElementById('loginHeaderBtn').style.display = 'none';
+      document.getElementById('userAvatar').textContent  = u.name.charAt(0).toUpperCase();
+      document.getElementById('userNameText').textContent = u.name.split(' ')[0];
       lucide.createIcons();
-      setTimeout(function() { toast.classList.add('show'); }, 10);
-      setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 200); }, 3000);
     }
 
-    // Code Generation
-    document.getElementById('codeGeneratorForm').addEventListener('submit', async function(e) {
+    function applyLoggedOutUI() {
+      document.getElementById('userPill').classList.remove('visible');
+      document.getElementById('loginHeaderBtn').style.display = '';
+      lucide.createIcons();
+    }
+
+    window.doLogout = function() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      state.currentUser = null;
+      applyLoggedOutUI();
+      toast('Signed out successfully', 'success');
+      navTo('home');
+    };
+
+    window.switchAuthTab = function(tab) {
+      ['login','register'].forEach(t => {
+        document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+        document.getElementById(t + 'Form').classList.toggle('active', t === tab);
+      });
+    };
+
+    window.doLogin = async function(e) {
       e.preventDefault();
-      var prompt = document.getElementById('prompt').value.trim();
-      var language = document.getElementById('language').value;
-      var framework = document.getElementById('framework').value;
-      if (!prompt) { showToast('Please enter a description', 'error'); return; }
-      
-      currentPrompt = prompt;
-      currentLanguage = language;
-      currentFramework = framework;
-      
-      var btn = document.getElementById('generateBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>Generating...';
-      
+      const btn = document.getElementById('loginBtn');
+      setButtonLoading(btn, true, 'Signing in...');
+      const email    = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
       try {
-        var response = await fetch('/generate', {
+        const res  = await fetch('/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password }) });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          state.currentUser = data.user;
+          applyLoggedInUI();
+          toast('Welcome back, ' + data.user.name.split(' ')[0] + '!', 'success');
+          navTo('home');
+          loadSavedCodes();
+        } else {
+          toast(data.error || 'Login failed. Check your credentials.', 'error');
+        }
+      } catch {
+        toast('Network error. Please try again.', 'error');
+      } finally {
+        setButtonLoading(btn, false, '<i data-lucide="log-in"></i> Sign In');
+        lucide.createIcons();
+      }
+    };
+
+    window.doRegister = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('registerBtn');
+      setButtonLoading(btn, true, 'Creating account...');
+      const name     = document.getElementById('regName').value.trim();
+      const email    = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      try {
+        const res  = await fetch('/auth/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, email, password }) });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          state.currentUser = data.user;
+          applyLoggedInUI();
+          toast('Account created! Welcome, ' + data.user.name.split(' ')[0] + '!', 'success');
+          navTo('home');
+        } else {
+          toast(data.error || 'Registration failed.', 'error');
+        }
+      } catch {
+        toast('Network error. Please try again.', 'error');
+      } finally {
+        setButtonLoading(btn, false, '<i data-lucide="user-plus"></i> Create Account');
+        lucide.createIcons();
+      }
+    };
+
+    window.doReset = function(e) {
+      e.preventDefault();
+      toast('Reset link sent! Check your inbox.', 'success');
+      setTimeout(() => navTo('login'), 1500);
+    };
+
+    // ══════════════════════════════════════════
+    // CODE GENERATION
+    // ══════════════════════════════════════════
+    window.handleGenerate = async function(e) {
+      e.preventDefault();
+      const prompt    = document.getElementById('promptInput').value.trim();
+      const lang      = document.getElementById('langSelect').value;
+      const framework = document.getElementById('frameworkSelect').value;
+
+      if (!prompt) { toast('Please describe what you want to build.', 'error'); return; }
+
+      state.currentPrompt    = prompt;
+      state.currentLang      = lang;
+      state.currentFramework = framework;
+
+      const btn = document.getElementById('genBtn');
+      setButtonLoading(btn, true, 'Generating...');
+      startLoadingBar();
+
+      try {
+        const res  = await fetch('/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt, language, framework })
+          body: JSON.stringify({ prompt, language: lang, framework }),
         });
-        var data = await response.json();
-        if (response.ok) {
-          currentCode = data.code;
-          document.getElementById('codeOutput').innerHTML = '<pre>' + highlightSyntax(data.code) + '</pre>';
-          document.getElementById('outputSection').classList.add('show');
-          showToast('Code generated successfully!', 'success');
+        const data = await res.json();
+        if (res.ok && data.code) {
+          state.currentCode = data.code;
+          renderCodeOutput(data.code, lang);
+          toast('Code generated successfully!', 'success');
         } else {
-          showToast(data.error || 'Failed to generate', 'error');
+          toast(data.error || 'Failed to generate code.', 'error');
         }
-      } catch (err) {
-        showToast('Connection error', 'error');
+      } catch {
+        toast('Connection error. Please check your network.', 'error');
+      } finally {
+        setButtonLoading(btn, false, '<i data-lucide="sparkles"></i> Generate Code');
+        lucide.createIcons();
+        stopLoadingBar();
       }
-      btn.disabled = false;
-      btn.innerHTML = '<i data-lucide="sparkles" style="width:14px;height:14px;"></i>Generate Code';
+    };
+
+    function renderCodeOutput(code, lang) {
+      document.getElementById('codeOutputPre').innerHTML = highlightCode(escapeHtml(code));
+      document.getElementById('outputLangBadge').textContent = lang.toUpperCase();
+      const out = document.getElementById('outputSection');
+      out.classList.add('visible');
+      out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ══════════════════════════════════════════
+    // COPY / SAVE
+    // ══════════════════════════════════════════
+    window.copyCurrentCode = function() {
+      if (!state.currentCode) { toast('Nothing to copy.', 'error'); return; }
+      copyText(state.currentCode);
+      toast('Code copied to clipboard!', 'success');
+    };
+
+    window.saveCurrentCode = async function() {
+      if (!state.currentCode) { toast('Generate code first.', 'error'); return; }
+      if (!localStorage.getItem('authToken')) {
+        toast('Please sign in to save code.', 'error');
+        navTo('login');
+        return;
+      }
+      const title = state.currentPrompt.slice(0, 50) + (state.currentPrompt.length > 50 ? '…' : '');
+      try {
+        const res  = await fetch('/save-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
+          body: JSON.stringify({ title, code: state.currentCode, language: state.currentLang, framework: state.currentFramework, prompt: state.currentPrompt }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          toast('Code saved!', 'success');
+          loadSavedCodes();
+        } else {
+          toast(data.error || 'Save failed.', 'error');
+        }
+      } catch {
+        toast('Network error.', 'error');
+      }
+    };
+
+    // ══════════════════════════════════════════
+    // SAVED CODES
+    // ══════════════════════════════════════════
+    async function loadSavedCodes() {
+      const token = localStorage.getItem('authToken');
+      const list  = document.getElementById('savedList');
+      const cnt   = document.getElementById('savedCount');
+      if (!token) {
+        renderEmptyState(list, 'lock', 'Sign in to see saved codes', 'Your snippets will appear here');
+        return;
+      }
+      try {
+        const res  = await fetch('/get-codes', { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        if (res.ok && data.codes) {
+          cnt.textContent = data.codes.length;
+          if (data.codes.length === 0) {
+            renderEmptyState(list, 'file-code-2', 'No saved codes yet', 'Generate and save your first snippet!');
+          } else {
+            renderCodeCards(list, data.codes.slice(0, 8));
+          }
+        }
+      } catch {
+        renderEmptyState(list, 'wifi-off', 'Failed to load', 'Check your connection and try again');
+      }
       lucide.createIcons();
-    });
-
-    // Syntax Highlight
-    function highlightSyntax(code) {
-      var escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      escaped = escaped.replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>');
-      escaped = escaped.replace(/("(?:[^"\\]|\\.)*")/g, '<span class="string">$1</span>');
-      escaped = escaped.replace(/\b(function|const|let|var|if|else|for|while|return|import|export|class|async|await)\b/g, '<span class="keyword">$1</span>');
-      escaped = escaped.replace(/\b(\w+)(?=\s*\()/g, '<span class="function">$1</span>');
-      return escaped;
     }
 
-    // Copy
-    function handleCopy() {
-      if (!currentCode) { showToast('No code to copy', 'error'); return; }
-      navigator.clipboard.writeText(currentCode).then(function() { showToast('Copied!', 'success'); }).catch(function() { showToast('Copy failed', 'error'); });
+    function renderCodeCards(container, codes) {
+      container.innerHTML = codes.map(c => `
+        <div class="code-card">
+          <div class="code-card-top">
+            <div class="code-card-title">${escapeHtml(c.title)}</div>
+          </div>
+          <div class="code-card-meta">
+            <span class="code-tag lang">${escapeHtml(c.language)}</span>
+            <span class="code-tag">
+              <i data-lucide="calendar"></i>
+              ${fmtDate(c.created_at)}
+            </span>
+          </div>
+          <div class="code-preview">${escapeHtml(c.code.slice(0, 120))}…</div>
+          <div class="code-card-actions">
+            <button class="btn btn-secondary btn-sm" onclick="openCodeModal(${c.id})">
+              <i data-lucide="eye"></i> View
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="copyById(${c.id})">
+              <i data-lucide="copy"></i> Copy
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deleteById(${c.id})">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
     }
 
-    // Save
-    function handleSave() {
-      if (!currentCode) { showToast('No code to save', 'error'); return; }
-      if (!localStorage.getItem('authToken')) { showToast('Please login first', 'error'); showPage('login'); return; }
-      
-      var title = currentPrompt.slice(0, 40) + (currentPrompt.length > 40 ? '...' : '');
-      fetch('/save-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('authToken') },
-        body: JSON.stringify({ title, code: currentCode, language: currentLanguage, framework: currentFramework, prompt: currentPrompt })
-      }).then(function(r) { return r.json(); }).then(function(data) {
-        if (data.success) { showToast('Saved!', 'success'); loadSavedCodes(); }
-        else { showToast(data.error || 'Failed', 'error'); }
-      }).catch(function() { showToast('Error', 'error'); });
+    function renderEmptyState(container, icon, title, sub) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon"><i data-lucide="${icon}"></i></div>
+          <div class="empty-title">${title}</div>
+          <div class="empty-sub">${sub}</div>
+        </div>`;
+      lucide.createIcons();
     }
 
-    // Load Saved Codes
-    function loadSavedCodes() {
-      if (!localStorage.getItem('authToken')) return;
-      fetch('/get-codes', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.codes) {
-            document.getElementById('codesCount').textContent = data.codes.length;
-            if (data.codes.length === 0) {
-              document.getElementById('codesList').innerHTML = '<div class="empty-state"><div class="empty-icon"><i data-lucide="file-code" style="width:20px;height:20px;"></i></div><div class="empty-text">No saved codes</div></div>';
-            } else {
-              document.getElementById('codesList').innerHTML = data.codes.slice(0,5).map(function(c) {
-                return '<div class="code-item"><h4>' + c.title + '</h4><div class="code-item-meta"><span><i data-lucide="code" style="width:12px;height:12px;"></i>' + c.language + '</span><span><i data-lucide="calendar" style="width:12px;height:12px;"></i>' + new Date(c.created_at).toLocaleDateString() + '</span></div><div class="code-item-preview">' + c.code.slice(0,100) + '...</div><div class="code-item-actions"><button class="btn btn-ghost btn-sm" onclick="viewCode(' + c.id + ')"><i data-lucide="eye" style="width:12px;height:12px;"></i>View</button><button class="btn btn-ghost btn-sm" onclick="copyCode(' + c.id + ')"><i data-lucide="copy" style="width:12px;height:12px;"></i>Copy</button></div></div>';
-              }).join('');
-            }
-            lucide.createIcons();
-          }
-        });
-    }
-
-    // View Code
-    window.viewCode = function(id) {
-      fetch('/get-code/' + id, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.code) {
-            currentCode = data.code;
-            document.getElementById('codeOutput').innerHTML = '<pre>' + highlightSyntax(data.code) + '</pre>';
-            document.getElementById('outputSection').classList.add('show');
-            showPage('home');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        });
-    };
-
-    // Copy Saved Code
-    window.copyCode = function(id) {
-      fetch('/get-code/' + id, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.code) {
-            navigator.clipboard.writeText(data.code).then(function() { showToast('Copied!', 'success'); });
-          }
-        });
-    };
-
-    // Dashboard
-    function loadDashboardData() {
-      if (!localStorage.getItem('authToken')) return;
-      fetch('/get-codes', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('authToken') } })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.codes) {
-            var codes = data.codes;
-            document.getElementById('totalCodes').textContent = codes.length;
-            var now = new Date();
-            var thisMonth = codes.filter(function(c) { var d = new Date(c.created_at); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); }).length;
-            document.getElementById('thisMonth').textContent = thisMonth;
-            var weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
-            var recent = codes.filter(function(c) { return new Date(c.created_at) > weekAgo; }).length;
-            document.getElementById('recentActivity').textContent = recent;
-            if (codes.length > 0) {
-              var langs = {};
-              codes.forEach(function(c) { langs[c.language] = (langs[c.language] || 0) + 1; });
-              var topLang = Object.keys(langs).reduce(function(a,b) { return langs[a] > langs[b] ? a : b; });
-              document.getElementById('favoriteLang').textContent = topLang;
-            }
-          }
+    window.openCodeModal = async function(id) {
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+      try {
+        const res  = await fetch('/get-code/' + id, { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        if (res.ok && data.code) {
+          state.modalCode = data.code;
+          document.getElementById('modalTitle').textContent  = data.title || 'Code Snippet';
+          document.getElementById('modalLangBadge').textContent = (data.language || 'code').toUpperCase();
+          document.getElementById('modalCodePre').innerHTML  = highlightCode(escapeHtml(data.code));
+          document.getElementById('codeModal').classList.add('open');
           lucide.createIcons();
-        });
-    }
-
-    // Chat
-    function sendChatMessage() {
-      var input = document.getElementById('chatInput');
-      var message = input.value.trim();
-      if (!message) return;
-      
-      var messages = document.getElementById('chatMessages');
-      messages.innerHTML += '<div class="chat-message user"><div class="chat-avatar"><i data-lucide="user" style="width:14px;height:14px;"></i></div><div class="chat-content"><p>' + message + '</p></div></div>';
-      messages.innerHTML += '<div class="chat-message bot" id="loading"><div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div><div class="chat-content"><p><span class="spinner"></span> Thinking...</p></div></div>';
-      input.value = '';
-      lucide.createIcons();
-      messages.scrollTop = messages.scrollHeight;
-
-      fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message })
-      }).then(function(r) { return r.json(); }).then(function(data) {
-        document.getElementById('loading').remove();
-        messages.innerHTML += '<div class="chat-message bot"><div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div><div class="chat-content"><p>' + (data.response || data.code || 'Sorry, I could not process that.') + '</p></div></div>';
-        if (data.code) {
-          currentCode = data.code;
-          currentPrompt = message;
-          showToast('Code generated! Go to Generate to view.', 'success');
         }
-        lucide.createIcons();
-        messages.scrollTop = messages.scrollHeight;
-      }).catch(function() {
-        document.getElementById('loading').remove();
-        messages.innerHTML += '<div class="chat-message bot"><div class="chat-avatar"><i data-lucide="bot" style="width:14px;height:14px;"></i></div><div class="chat-content"><p>Sorry, there was an error.</p></div></div>';
-        lucide.createIcons();
-      });
-    }
-
-    document.getElementById('chatInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') sendChatMessage();
-    });
-
-    // Docs - JSON Search Data
-    var docsData = {
-      'getting-started': '<h2>Getting Started</h2><p>Welcome to AI Coder! This documentation will help you get started.</p><h3>Quick Start</h3><ol><li>Create an account or login</li><li>Enter a description</li><li>Select language</li><li>Click Generate</li></ol><h3>Features</h3><ul><li>AI Code Generation</li><li>Chat Interface</li><li>Save & Manage</li></ul>',
-      'authentication': '<h2>Authentication</h2><p>Learn how to authenticate.</p><h3>Login</h3><p>POST /auth/login with email and password.</p><h3>Register</h3><p>POST /auth/register with name, email, password.</p><h3>Reset Password</h3><p>Request password reset via email.</p>',
-      'api-reference': '<h2>API Reference</h2><h3>Code Generation</h3><p>POST /generate - Generate code</p><p>POST /save-code - Save code (auth)</p><p>GET /get-codes - Get all codes (auth)</p><p>DELETE /delete-code/:id - Delete code</p>',
-      'code-generation': '<h2>Code Generation</h2><h3>Supported Languages</h3><ul><li>JavaScript</li><li>TypeScript</li><li>Python</li><li>HTML/CSS</li><li>React</li><li>Go</li><li>Rust</li></ul><h3>Frameworks</h3><ul><li>Express.js</li><li>Next.js</li><li>FastAPI</li><li>Flask</li></ul>',
-      'examples': '<h2>Examples</h2><h3>Login Form</h3><p>Input: "Create a responsive login form"</p><h3>API Endpoint</h3><p>Input: "Create REST API for user CRUD"</p><h3>React Component</h3><p>Input: "Create a React button component"</p>',
-      'faq': '<h2>FAQ</h2><h3>Is it free?</h3><p>Yes, basic usage is free.</p><h3>What languages?</h3><p>JavaScript, TypeScript, Python, HTML, CSS, React, Go, Rust.</p><h3>How to save?</h3><p>Login and click Save after generating.</p>',
-      'search': '<h2>🔍 Code Search</h2><p>Search through documentation and code examples.</p><h3>Popular Searches</h3><ul><li><strong>JavaScript</strong> - Functions, arrays, objects</li><li><strong>Python</strong> - Classes, lists, dictionaries</li><li><strong>React</strong> - Components, hooks, state</li><li><strong>API</strong> - REST, endpoints, CRUD</li><li><strong>Auth</strong> - JWT, login, register</li><li><strong>Database</strong> - SQL, queries, migrations</li></ul><h3>Quick Examples</h3><pre class="code-output">// JavaScript function
-function greet(name) {
-  return `Hello, ${name}!`;
-}
-
-// Python class
-class User:
-    def __init__(self, name):
-        self.name = name
-        
-// React hook
-const useState = (initial) => {
-  const state = initial;
-  // ...
-};</pre>'
+      } catch {
+        toast('Failed to load code.', 'error');
+      }
     };
 
-    function showDoc(docId) {
-      event.preventDefault();
-      document.getElementById('doc-content').innerHTML = docsData[docId] || docsData['getting-started'];
-      document.querySelectorAll('.docs-link').forEach(function(l) { l.classList.remove('active'); });
-      event.target.classList.add('active');
+    window.closeModal = function() {
+      document.getElementById('codeModal').classList.remove('open');
+    };
+
+    document.getElementById('codeModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    window.copyModalCode = function() {
+      if (state.modalCode) { copyText(state.modalCode); toast('Copied!', 'success'); }
+    };
+
+    window.copyById = async function(id) {
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+      try {
+        const res  = await fetch('/get-code/' + id, { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        if (data.code) { copyText(data.code); toast('Copied!', 'success'); }
+      } catch { toast('Failed to copy.', 'error'); }
+    };
+
+    window.deleteById = async function(id) {
+      if (!confirm('Delete this code snippet?')) return;
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+      try {
+        const res  = await fetch('/delete-code/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        if (res.ok) { toast('Deleted.', 'success'); loadSavedCodes(); }
+        else toast(data.error || 'Delete failed.', 'error');
+      } catch { toast('Network error.', 'error'); }
+    };
+
+    // ══════════════════════════════════════════
+    // DASHBOARD
+    // ══════════════════════════════════════════
+    async function loadDashboard() {
+      const token = localStorage.getItem('authToken');
+      const al    = document.getElementById('activityList');
+      if (!token) {
+        renderEmptyState(al, 'lock', 'Sign in to view dashboard', 'Your stats will appear here');
+        return;
+      }
+      try {
+        const res  = await fetch('/get-codes', { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        if (!res.ok || !data.codes) return;
+        const codes = data.codes;
+        const now   = new Date();
+        const weekAgo  = new Date(now - 7 * 86400000);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        document.getElementById('statTotal').textContent = codes.length;
+        document.getElementById('statMonth').textContent = codes.filter(c => new Date(c.created_at) >= monthStart).length;
+        document.getElementById('statWeek').textContent  = codes.filter(c => new Date(c.created_at) >= weekAgo).length;
+
+        if (codes.length > 0) {
+          const freq = {};
+          codes.forEach(c => { freq[c.language] = (freq[c.language] || 0) + 1; });
+          const topLang = Object.keys(freq).reduce((a,b) => freq[a] > freq[b] ? a : b);
+          document.getElementById('statLang').textContent = topLang;
+        }
+
+        if (codes.length === 0) {
+          renderEmptyState(al, 'activity', 'No activity yet', 'Start generating code!');
+        } else {
+          renderCodeCards(al, codes.slice(0, 5));
+        }
+      } catch {
+        renderEmptyState(al, 'wifi-off', 'Failed to load', 'Check your connection');
+      }
+      lucide.createIcons();
     }
 
-    function searchDocs() {
-      var query = document.getElementById('docsSearch').value.toLowerCase();
-      document.querySelectorAll('.docs-link').forEach(function(link) {
-        link.style.display = (link.textContent.toLowerCase().includes(query) || query === '') ? 'block' : 'none';
+    // ══════════════════════════════════════════
+    // CHAT
+    // ══════════════════════════════════════════
+    window.sendChat = async function() {
+      const input = document.getElementById('chatInput');
+      const msg   = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+
+      const msgs = document.getElementById('chatMessages');
+
+      // User bubble
+      msgs.insertAdjacentHTML('beforeend', `
+        <div class="msg user">
+          <div class="msg-avatar">U</div>
+          <div class="msg-bubble">${escapeHtml(msg)}</div>
+        </div>`);
+
+      // Typing indicator
+      const typingId = 'typing-' + Date.now();
+      msgs.insertAdjacentHTML('beforeend', `
+        <div class="msg bot" id="${typingId}">
+          <div class="msg-avatar"><i data-lucide="bot"></i></div>
+          <div class="msg-bubble" style="display:flex;align-items:center;gap:8px;">
+            <span class="spinner"></span> <span style="color:var(--text-muted);">Thinking…</span>
+          </div>
+        </div>`);
+      lucide.createIcons();
+      msgs.scrollTop = msgs.scrollHeight;
+
+      try {
+        const res  = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg }),
+        });
+        const data = await res.json();
+        document.getElementById(typingId)?.remove();
+        const reply = data.response || data.code || 'Sorry, I couldn\'t process that.';
+        msgs.insertAdjacentHTML('beforeend', `
+          <div class="msg bot">
+            <div class="msg-avatar"><i data-lucide="bot"></i></div>
+            <div class="msg-bubble">${escapeHtml(reply)}</div>
+          </div>`);
+        if (data.code) { state.currentCode = data.code; state.currentPrompt = msg; }
+      } catch {
+        document.getElementById(typingId)?.remove();
+        msgs.insertAdjacentHTML('beforeend', `
+          <div class="msg bot">
+            <div class="msg-avatar"><i data-lucide="bot"></i></div>
+            <div class="msg-bubble" style="color:var(--text-muted);">Connection error. Please try again.</div>
+          </div>`);
+      }
+      lucide.createIcons();
+      msgs.scrollTop = msgs.scrollHeight;
+    };
+
+    document.getElementById('chatInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+    });
+
+    // ══════════════════════════════════════════
+    // DOCS
+    // ══════════════════════════════════════════
+    const DOCS = {
+      'getting-started': `
+        <h2>🚀 Getting Started</h2>
+        <p>Welcome to <strong>AI Coder</strong> — your intelligent coding companion. Get production-ready code in seconds by simply describing what you want to build.</p>
+        <h3>Quick Start</h3>
+        <ol>
+          <li>Navigate to the <strong>Generate</strong> tab</li>
+          <li>Describe what you want to build in plain English</li>
+          <li>Select your preferred programming language and framework</li>
+          <li>Click <strong>Generate Code</strong> and get your result instantly</li>
+          <li>Copy or save the generated code to your account</li>
+        </ol>
+        <h3>Features Overview</h3>
+        <ul>
+          <li><strong>AI Code Generation</strong> — Natural language to code in 7+ languages</li>
+          <li><strong>AI Chat</strong> — Ask coding questions, get explanations</li>
+          <li><strong>Save &amp; Manage</strong> — Store your snippets securely</li>
+          <li><strong>Dashboard</strong> — Track your usage and top languages</li>
+        </ul>`,
+
+      'authentication': `
+        <h2>🔐 Authentication</h2>
+        <p>AI Coder uses JWT-based authentication to keep your code snippets secure.</p>
+        <h3>Sign In</h3>
+        <p><code>POST /auth/login</code> — Send your email and password to receive a JWT token.</p>
+        <h3>Create Account</h3>
+        <p><code>POST /auth/register</code> — Register with your name, email, and password (min 8 chars).</p>
+        <h3>Token Usage</h3>
+        <p>Include your token in all authenticated requests as a Bearer token in the Authorization header:</p>
+        <pre><code>Authorization: Bearer &lt;your-token&gt;</code></pre>`,
+
+      'api-reference': `
+        <h2>⚡ API Reference</h2>
+        <h3>Code Generation</h3>
+        <p><code>POST /generate</code> — Generate code from a prompt (no auth required)</p>
+        <p>Body: <code>{ prompt, language, framework }</code></p>
+        <h3>Code Management</h3>
+        <p><code>POST /save-code</code> — Save a code snippet (auth required)</p>
+        <p><code>GET /get-codes</code> — Get all saved codes (auth required)</p>
+        <p><code>GET /get-code/:id</code> — Get a specific code (auth required)</p>
+        <p><code>DELETE /delete-code/:id</code> — Delete a code (auth required)</p>
+        <h3>Auth Endpoints</h3>
+        <p><code>POST /auth/login</code> — Sign in</p>
+        <p><code>POST /auth/register</code> — Create account</p>`,
+
+      'code-generation': `
+        <h2>🪄 Code Generation</h2>
+        <h3>Supported Languages</h3>
+        <ul>
+          <li><strong>JavaScript</strong> — ES2022+, async/await, modules</li>
+          <li><strong>TypeScript</strong> — Typed JS with interfaces and generics</li>
+          <li><strong>Python</strong> — Python 3.10+, dataclasses, type hints</li>
+          <li><strong>HTML/CSS</strong> — Semantic HTML5, modern CSS</li>
+          <li><strong>React</strong> — Functional components, hooks</li>
+          <li><strong>Go</strong> — Idiomatic Go with error handling</li>
+          <li><strong>Rust</strong> — Memory-safe systems programming</li>
+        </ul>
+        <h3>Supported Frameworks</h3>
+        <ul>
+          <li>Express.js, Next.js, FastAPI, Flask, Tailwind CSS</li>
+        </ul>
+        <h3>Tips for Best Results</h3>
+        <ul>
+          <li>Be specific about requirements and edge cases</li>
+          <li>Mention the framework or library you're using</li>
+          <li>Specify if you need tests, types, or comments</li>
+        </ul>`,
+
+      'examples': `
+        <h2>📋 Examples</h2>
+        <h3>REST API Endpoint</h3>
+        <p>Prompt: <em>"Create a POST endpoint that validates email, hashes passwords with bcrypt, and saves users to PostgreSQL"</em></p>
+        <h3>React Component</h3>
+        <p>Prompt: <em>"Build a responsive card component with image, title, description, and a hover animation in React with Tailwind"</em></p>
+        <h3>Python Data Processing</h3>
+        <p>Prompt: <em>"Write a Python function that reads a CSV file, filters rows by date range, and returns a pandas DataFrame"</em></p>
+        <h3>Authentication System</h3>
+        <p>Prompt: <em>"Create a complete JWT authentication system with login, register, and refresh token endpoints using Express"</em></p>`,
+
+      'faq': `
+        <h2>❓ FAQ</h2>
+        <h3>Is AI Coder free?</h3>
+        <p>Yes! Basic code generation is completely free. Sign up to unlock saving and history features.</p>
+        <h3>How accurate is the generated code?</h3>
+        <p>AI Coder produces production-quality code. We recommend reviewing and testing before deploying to production.</p>
+        <h3>Can I save code without an account?</h3>
+        <p>Code generation works without an account, but saving requires a free account.</p>
+        <h3>What's the maximum prompt length?</h3>
+        <p>Prompts can be up to 2000 characters. More detail generally gives better results.</p>
+        <h3>Is my saved code private?</h3>
+        <p>Yes — all saved code is private to your account and secured with JWT authentication.</p>`,
+    };
+
+    window.showDoc = function(docId, btn) {
+      state.currentDocId = docId;
+      renderDoc(docId);
+      document.querySelectorAll('.docs-nav-item').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      lucide.createIcons();
+    };
+
+    function renderDoc(docId) {
+      const content = DOCS[docId] || DOCS['getting-started'];
+      document.getElementById('docsContent').innerHTML = content;
+      lucide.createIcons();
+    }
+
+    window.filterDocs = function() {
+      const q = document.getElementById('docsSearchInput').value.toLowerCase();
+      document.querySelectorAll('.docs-nav-item').forEach(btn => {
+        btn.style.display = (q === '' || btn.textContent.toLowerCase().includes(q)) ? '' : 'none';
       });
+    };
+
+    // ══════════════════════════════════════════
+    // SYNTAX HIGHLIGHTING
+    // ══════════════════════════════════════════
+    function highlightCode(code) {
+      // Order matters — process comments first, then strings, then keywords
+      // Use placeholder technique to avoid double-processing
+      const placeholders = [];
+      let idx = 0;
+      let result = code;
+
+      function protect(match, cls) {
+        const key = `\x00${idx++}\x00`;
+        placeholders.push({ key, html: `<span class="tok-${cls}">${match}</span>` });
+        return key;
+      }
+
+      // Comments (single-line and multi-line)
+      result = result.replace(/(\/\/[^\n]*)|(\/\*[\s\S]*?\*\/)|(#[^\n]*)/g,
+        m => protect(m, 'comment'));
+
+      // Strings
+      result = result.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g,
+        m => protect(m, 'string'));
+
+      // Keywords
+      result = result.replace(
+        /\b(function|const|let|var|if|else|for|while|do|switch|case|break|continue|return|import|export|default|class|extends|new|this|super|async|await|try|catch|finally|throw|typeof|instanceof|in|of|def|from|as|with|lambda|pass|None|True|False|and|or|not|print|pub|fn|let|mut|use|impl|struct|enum|trait|where|self|mod|type|interface|implements|void|static|final|public|private|protected)\b/g,
+        m => `<span class="tok-keyword">${m}</span>`);
+
+      // Numbers
+      result = result.replace(/\b(0x[0-9a-fA-F]+|\d+\.?\d*)\b/g,
+        m => `<span class="tok-number">${m}</span>`);
+
+      // Functions
+      result = result.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g,
+        (m, name) => `<span class="tok-function">${name}</span>`);
+
+      // Restore protected segments
+      placeholders.forEach(({ key, html }) => {
+        result = result.replace(key, html);
+      });
+
+      return result;
     }
 
-    // Login Form
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var email = document.getElementById('loginEmail').value;
-      var password = document.getElementById('loginPassword').value;
-      fetch('/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, password: password })
-      }).then(function(r) { return r.json(); }).then(function(data) {
-        if (data.token) {
-          localStorage.setItem('authToken', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          currentUser = data.user;
-          document.getElementById('userSection').classList.add('active');
-          document.getElementById('loginBtn').style.display = 'none';
-          document.getElementById('userAvatar').textContent = data.user.name.charAt(0).toUpperCase();
-          document.getElementById('userName').textContent = data.user.name;
-          showToast('Welcome back!', 'success');
-          showPage('home');
-          loadSavedCodes();
-        } else {
-          showToast(data.error || 'Login failed', 'error');
-        }
-      }).catch(function() { showToast('Error', 'error'); });
-    });
+    // ══════════════════════════════════════════
+    // TOAST
+    // ══════════════════════════════════════════
+    function toast(message, type = 'success') {
+      const stack = document.getElementById('toastStack');
+      const el    = document.createElement('div');
+      el.className = 'toast ' + type;
+      const icon = type === 'success' ? 'check-circle-2' : type === 'error' ? 'x-circle' : 'info';
+      el.innerHTML = `<span class="toast-icon"><i data-lucide="${icon}"></i></span><span>${message}</span>`;
+      stack.appendChild(el);
+      lucide.createIcons();
+      requestAnimationFrame(() => { requestAnimationFrame(() => { el.classList.add('in'); }); });
+      setTimeout(() => {
+        el.classList.remove('in');
+        setTimeout(() => el.remove(), 380);
+      }, 3200);
+    }
+    window.toast = toast;
 
-    // Register Form
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var name = document.getElementById('registerName').value;
-      var email = document.getElementById('registerEmail').value;
-      var password = document.getElementById('registerPassword').value;
-      fetch('/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, email: email, password: password })
-      }).then(function(r) { return r.json(); }).then(function(data) {
-        if (data.token) {
-          localStorage.setItem('authToken', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          currentUser = data.user;
-          document.getElementById('userSection').classList.add('active');
-          document.getElementById('loginBtn').style.display = 'none';
-          document.getElementById('userAvatar').textContent = data.user.name.charAt(0).toUpperCase();
-          document.getElementById('userName').textContent = data.user.name;
-          showToast('Account created!', 'success');
-          showPage('home');
-          loadSavedCodes();
-        } else {
-          showToast(data.error || 'Registration failed', 'error');
-        }
-      }).catch(function() { showToast('Error', 'error'); });
-    });
+    // ══════════════════════════════════════════
+    // LOADING BAR
+    // ══════════════════════════════════════════
+    function startLoadingBar() {
+      const bar = document.getElementById('loadingBar');
+      bar.style.width = '0%';
+      bar.style.transition = 'width 2s ease';
+      requestAnimationFrame(() => { bar.style.width = '75%'; });
+    }
+    function stopLoadingBar() {
+      const bar = document.getElementById('loadingBar');
+      bar.style.transition = 'width 0.2s ease';
+      bar.style.width = '100%';
+      setTimeout(() => {
+        bar.style.transition = 'none';
+        bar.style.width = '0%';
+      }, 300);
+    }
 
-    // Reset Form
-    document.getElementById('resetForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      showToast('Reset link sent to your email!', 'success');
-      showPage('login');
-    });
+    // ══════════════════════════════════════════
+    // UTILITIES
+    // ══════════════════════════════════════════
+    function setButtonLoading(btn, loading, originalHtml) {
+      if (loading) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> ' + originalHtml;
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+
+    function escapeHtml(str) {
+      if (typeof str !== 'string') return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function fmtDate(dateStr) {
+      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // Expose for inline usage
+    window.loadSavedCodes = loadSavedCodes;
+
+  })();
   </script>
 </body>
 </html>

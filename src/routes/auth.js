@@ -1,6 +1,9 @@
+/**
+ * auth.js — Auth routes (login / register)
+ * Bug fix: generateToken is now async — all calls must use await
+ */
 import { getDatabase } from '../services/database.js';
-import { hashPassword, verifyPassword } from '../services/jwt.js';
-import { generateToken } from '../services/jwt.js';
+import { hashPassword, verifyPassword, generateToken } from '../services/jwt.js';
 
 export async function login(request, env) {
   try {
@@ -15,19 +18,16 @@ export async function login(request, env) {
     }
 
     const db = getDatabase(env);
-    const users = await db.execute({
-      sql: `SELECT id, name, email, password FROM users WHERE email = ?`,
-      args: [email],
-    });
+    const users = await db`SELECT id, name, email, password FROM users WHERE email = ${email} LIMIT 1`;
 
-    if (users.rows.length === 0) {
+    if (!users || users.length === 0) {
       return new Response(JSON.stringify({ error: 'Invalid credentials' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const user = users.rows[0];
+    const user = users[0];
     const isValid = await verifyPassword(password, user.password);
 
     if (!isValid) {
@@ -37,21 +37,18 @@ export async function login(request, env) {
       });
     }
 
-    const token = generateToken(user, env);
+    // generateToken is now async — must await
+    const token = await generateToken(user, env);
 
     return new Response(JSON.stringify({
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+      user: { id: user.id, name: user.name, email: user.email },
     }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Login error:', error);
-    return new Response(JSON.stringify({ error: 'Login failed' }), {
+    return new Response(JSON.stringify({ error: 'Login failed. Please try again.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -64,52 +61,52 @@ export async function register(request, env) {
     const { name, email, password } = body;
 
     if (!name || !email || !password) {
-      return new Response(JSON.stringify({ error: 'Name, email and password are required' }), {
+      return new Response(JSON.stringify({ error: 'Name, email, and password are required' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // Check if user already exists
-    const db = getDatabase(env);
-    const existingUsers = await db.execute({
-      sql: `SELECT id FROM users WHERE email = ?`,
-      args: [email],
-    });
+    if (password.length < 8) {
+      return new Response(JSON.stringify({ error: 'Password must be at least 8 characters' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    if (existingUsers.rows.length > 0) {
-      return new Response(JSON.stringify({ error: 'Email already registered' }), {
+    const db = getDatabase(env);
+
+    // Check if email is already registered
+    const existing = await db`SELECT id FROM users WHERE email = ${email} LIMIT 1`;
+    if (existing && existing.length > 0) {
+      return new Response(JSON.stringify({ error: 'This email is already registered' }), {
         status: 409,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // Hash password and create user
     const hashedPassword = await hashPassword(password);
-    const result = await db.execute({
-      sql: `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`,
-      args: [name, email, hashedPassword],
-    });
+    const result = await db`
+      INSERT INTO users (name, email, password)
+      VALUES (${name}, ${email}, ${hashedPassword})
+      RETURNING id, name, email
+    `;
 
-    const token = generateToken({
-      id: result.lastInsertId,
-      name,
-      email,
-    }, env);
+    const newUser = result[0];
+
+    // generateToken is now async — must await
+    const token = await generateToken(newUser, env);
 
     return new Response(JSON.stringify({
       token,
-      user: {
-        id: result.lastInsertId,
-        name,
-        email,
-      },
+      user: { id: newUser.id, name: newUser.name, email: newUser.email },
     }), {
+      status: 201,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Register error:', error);
-    return new Response(JSON.stringify({ error: 'Registration failed' }), {
+    return new Response(JSON.stringify({ error: 'Registration failed. Please try again.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

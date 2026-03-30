@@ -7,16 +7,23 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "build": "wrangler deploy --env production"
+    "build": "wrangler deploy --env production",
+    "preview": "node preview-server.js"
   },
-  "keywords": ["ai", "code-generator", "cloudflare-worker", "neon"],
+  "keywords": [
+    "ai",
+    "code-generator",
+    "cloudflare-worker",
+    "neon"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@neondatabase/serverless": "^0.9.0",
-    "@graphql-tools/jwt": "^5.1.0"
+    "jsonwebtoken": "^9.0.2",
+    "lucide": "^1.7.0"
   },
   "devDependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "wrangler": "^3.28.0"
   }
 }
